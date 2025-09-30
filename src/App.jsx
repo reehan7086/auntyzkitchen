@@ -23,11 +23,30 @@ const App = () => {
     cuisines: [], dietType: [], allergens: [], 
     cookingStyle: [], spiceLevel: 'medium',
     mealTiming: [], portionSize: 'regular', 
-    specialInstructions: ''
+    specialInstructions: '',
+    oilType: 'olive',
+  saltType: 'regular',
+  sweetenerType: 'sugar',
+  healthConditions: [],
+  healthNotes: '',
+  ingredientQuality: 'standard',
+  texturePreference: 'regular',
+  meatPreparation: 'cubed',
+  vegetableCut: 'medium',
+  deliveryWindow: 'evening',
+  packagingType: 'microwave',
+  separateComponents: false,
+  familyMembers: 1,
+  kidsVersion: false,
+  elderlyFriendly: false,
+  weeklyVariety: true,
+  seasonalPreference: true,
+  reheatingInstructions: true
   });
   const [calculatedData, setCalculatedData] = useState(null);
   const [leads, setLeads] = useState([]);
   const [notification, setNotification] = useState('');
+  const [expandedLead, setExpandedLead] = useState(null);
 
   useEffect(() => {
     if (userType === 'vendor') {
@@ -36,94 +55,217 @@ const App = () => {
   }, [userType]);
 
   // Data Arrays
-  const cuisines = [
-    { id: 'indian', label: 'Indian', icon: '🍛' },
-    { id: 'filipino', label: 'Filipino', icon: '🍲' },
-    { id: 'british', label: 'British', icon: '🥧' },
-    { id: 'arabic', label: 'Arabic', icon: '🫓' },
-    { id: 'chinese', label: 'Chinese', icon: '🥡' },
-    { id: 'italian', label: 'Italian', icon: '🍝' },
-    { id: 'thai', label: 'Thai', icon: '🍜' },
-    { id: 'mexican', label: 'Mexican', icon: '🌮' },
-    { id: 'japanese', label: 'Japanese', icon: '🍱' },
-    { id: 'korean', label: 'Korean', icon: '🍚' },
-    { id: 'mediterranean', label: 'Mediterranean', icon: '🥙' },
-    { id: 'american', label: 'American', icon: '🍔' }
-  ];
+ // Existing arrays (keep as is)
+const cuisines = [
+  { id: 'indian', label: 'Indian', icon: '🍛' },
+  { id: 'filipino', label: 'Filipino', icon: '🍲' },
+  { id: 'british', label: 'British', icon: '🥧' },
+  { id: 'arabic', label: 'Arabic', icon: '🫓' },
+  { id: 'chinese', label: 'Chinese', icon: '🥡' },
+  { id: 'italian', label: 'Italian', icon: '🍝' },
+  { id: 'thai', label: 'Thai', icon: '🍜' },
+  { id: 'mexican', label: 'Mexican', icon: '🌮' },
+  { id: 'japanese', label: 'Japanese', icon: '🍱' },
+  { id: 'korean', label: 'Korean', icon: '🍚' },
+  { id: 'mediterranean', label: 'Mediterranean', icon: '🥙' },
+  { id: 'american', label: 'American', icon: '🍔' }
+];
 
-  const dietTypes = [
-    { id: 'vegan', label: 'Vegan', icon: '🌱' },
-    { id: 'vegetarian', label: 'Vegetarian', icon: '🥗' },
-    { id: 'keto', label: 'Keto', icon: '🥑' },
-    { id: 'paleo', label: 'Paleo', icon: '🍖' },
-    { id: 'lowcarb', label: 'Low-Carb', icon: '🥩' },
-    { id: 'glutenfree', label: 'Gluten-Free', icon: '🌾' },
-    { id: 'halal', label: 'Halal', icon: '☪️' },
-    { id: 'kosher', label: 'Kosher', icon: '✡️' }
-  ];
+const dietTypes = [
+  { id: 'vegan', label: 'Vegan', icon: '🌱' },
+  { id: 'vegetarian', label: 'Vegetarian', icon: '🥗' },
+  { id: 'keto', label: 'Keto', icon: '🥑' },
+  { id: 'paleo', label: 'Paleo', icon: '🍖' },
+  { id: 'lowcarb', label: 'Low-Carb', icon: '🥩' },
+  { id: 'glutenfree', label: 'Gluten-Free', icon: '🌾' },
+  { id: 'halal', label: 'Halal', icon: '☪️' },
+  { id: 'kosher', label: 'Kosher', icon: '✡️' }
+];
 
-  const allergens = [
-    'Nuts', 'Dairy', 'Eggs', 'Soy', 'Shellfish', 'Wheat', 
-    'Fish', 'Sesame', 'Peanuts', 'Tree Nuts', 'Gluten', 'Lactose'
-  ];
+const allergens = [
+  'Nuts', 'Dairy', 'Eggs', 'Soy', 'Shellfish', 'Wheat', 
+  'Fish', 'Sesame', 'Peanuts', 'Tree Nuts', 'Gluten', 'Lactose'
+];
 
-  const cookingStyles = [
-    { id: 'grilled', label: 'Grilled', desc: 'Smoky & charred', icon: Flame },
-    { id: 'baked', label: 'Baked', desc: 'Oven-roasted', icon: Pizza },
-    { id: 'steamed', label: 'Steamed', desc: 'Light & healthy', icon: Droplets },
-    { id: 'stirfry', label: 'Stir-Fry', desc: 'Quick & crispy', icon: Sparkles },
-    { id: 'slowcooked', label: 'Slow-Cooked', desc: 'Tender & rich', icon: Clock },
-    { id: 'raw', label: 'Raw/Fresh', desc: 'Salads & fresh', icon: Heart }
-  ];
+const cookingStyles = [
+  { id: 'grilled', label: 'Grilled', desc: 'Smoky & charred', icon: Flame },
+  { id: 'baked', label: 'Baked', desc: 'Oven-roasted', icon: Pizza },
+  { id: 'steamed', label: 'Steamed', desc: 'Light & healthy', icon: Droplets },
+  { id: 'stirfry', label: 'Stir-Fry', desc: 'Quick & crispy', icon: Sparkles },
+  { id: 'slowcooked', label: 'Slow-Cooked', desc: 'Tender & rich', icon: Clock },
+  { id: 'raw', label: 'Raw/Fresh', desc: 'Salads & fresh', icon: Heart }
+];
 
-  const spiceLevels = [
-    { value: 'none', label: 'None', emoji: '😊' },
-    { value: 'mild', label: 'Mild', emoji: '😌' },
-    { value: 'medium', label: 'Medium', emoji: '🙂' },
-    { value: 'hot', label: 'Hot', emoji: '😅' },
-    { value: 'extra', label: 'Extra Hot', emoji: '🥵' }
-  ];
+const spiceLevels = [
+  { value: 'none', label: 'None', emoji: '😊' },
+  { value: 'mild', label: 'Mild', emoji: '😌' },
+  { value: 'medium', label: 'Medium', emoji: '🙂' },
+  { value: 'hot', label: 'Hot', emoji: '😅' },
+  { value: 'extra', label: 'Extra Hot', emoji: '🥵' }
+];
 
-  const mealTimings = [
-    { id: 'breakfast', label: 'Breakfast', time: '7-10 AM', icon: '🌅' },
-    { id: 'brunch', label: 'Brunch', time: '10 AM-12 PM', icon: '☕' },
-    { id: 'lunch', label: 'Lunch', time: '12-2 PM', icon: '☀️' },
-    { id: 'snack', label: 'Snacks', time: '3-5 PM', icon: '🍿' },
-    { id: 'dinner', label: 'Dinner', time: '7-9 PM', icon: '🌙' },
-    { id: 'latenight', label: 'Late Night', time: '9 PM+', icon: '⭐' }
-  ];
+const mealTimings = [
+  { id: 'breakfast', label: 'Breakfast', time: '7-10 AM', icon: '🌅' },
+  { id: 'brunch', label: 'Brunch', time: '10 AM-12 PM', icon: '☕' },
+  { id: 'lunch', label: 'Lunch', time: '12-2 PM', icon: '☀️' },
+  { id: 'snack', label: 'Snacks', time: '3-5 PM', icon: '🍿' },
+  { id: 'dinner', label: 'Dinner', time: '7-9 PM', icon: '🌙' },
+  { id: 'latenight', label: 'Late Night', time: '9 PM+', icon: '⭐' }
+];
 
-  const activityLevels = [
-    { value: '1.2', label: 'Sedentary', desc: 'Little/no exercise', icon: '🛋️' },
-    { value: '1.375', label: 'Light', desc: '1-3 days/week', icon: '🚶' },
-    { value: '1.55', label: 'Moderate', desc: '3-5 days/week', icon: '🏃' },
-    { value: '1.725', label: 'Active', desc: '6-7 days/week', icon: '💪' },
-    { value: '1.9', label: 'Very Active', desc: 'Athlete level', icon: '🏋️' }
-  ];
+const activityLevels = [
+  { value: '1.2', label: 'Sedentary', desc: 'Little/no exercise', icon: '🛋️' },
+  { value: '1.375', label: 'Light', desc: '1-3 days/week', icon: '🚶' },
+  { value: '1.55', label: 'Moderate', desc: '3-5 days/week', icon: '🏃' },
+  { value: '1.725', label: 'Active', desc: '6-7 days/week', icon: '💪' },
+  { value: '1.9', label: 'Very Active', desc: 'Athlete level', icon: '🏋️' }
+];
 
-  const goals = [
-    { 
-      value: 'loss', 
-      label: 'Weight Loss', 
-      desc: 'Caloric deficit', 
-      icon: TrendingUp, 
-      color: 'from-red-400 to-orange-500' 
-    },
-    { 
-      value: 'maintain', 
-      label: 'Maintain', 
-      desc: 'Stay balanced', 
-      icon: Target, 
-      color: 'from-blue-400 to-cyan-500' 
-    },
-    { 
-      value: 'gain', 
-      label: 'Muscle Gain', 
-      desc: 'Caloric surplus', 
-      icon: Zap, 
-      color: 'from-green-400 to-emerald-500' 
-    }
-  ];
+const goals = [
+  { 
+    value: 'loss', 
+    label: 'Weight Loss', 
+    desc: 'Caloric deficit', 
+    icon: TrendingUp, 
+    color: 'from-red-400 to-orange-500' 
+  },
+  { 
+    value: 'maintain', 
+    label: 'Maintain', 
+    desc: 'Stay balanced', 
+    icon: Target, 
+    color: 'from-blue-400 to-cyan-500' 
+  },
+  { 
+    value: 'gain', 
+    label: 'Muscle Gain', 
+    desc: 'Caloric surplus', 
+    icon: Zap, 
+    color: 'from-green-400 to-emerald-500' 
+  }
+];
+
+// NEW ARRAYS - Advanced Customization
+const oilTypes = [
+  { id: 'olive', label: 'Olive Oil', icon: '🫒', desc: 'Heart-healthy Mediterranean' },
+  { id: 'coconut', label: 'Coconut Oil', icon: '🥥', desc: 'High-heat cooking' },
+  { id: 'avocado', label: 'Avocado Oil', icon: '🥑', desc: 'Neutral & versatile' },
+  { id: 'ghee', label: 'Ghee/Butter', icon: '🧈', desc: 'Traditional rich flavor' },
+  { id: 'vegetable', label: 'Vegetable Oil', icon: '🌻', desc: 'Light & economical' },
+  { id: 'sesame', label: 'Sesame Oil', icon: '🫘', desc: 'Aromatic Asian style' }
+];
+
+const saltTypes = [
+  { id: 'regular', label: 'Regular Salt', desc: 'Standard iodized', icon: '🧂' },
+  { id: 'low', label: 'Low Sodium', desc: 'Heart-friendly', icon: '💚' },
+  { id: 'sea', label: 'Sea Salt', desc: 'Mineral-rich', icon: '🌊' },
+  { id: 'pink', label: 'Pink Himalayan', desc: 'Trace minerals', icon: '💗' },
+  { id: 'none', label: 'No Added Salt', desc: 'Natural only', icon: '🚫' }
+];
+
+const sweetenerTypes = [
+  { id: 'sugar', label: 'White Sugar', icon: '🍬', desc: 'Standard' },
+  { id: 'brown', label: 'Brown Sugar', icon: '🟤', desc: 'Molasses flavor' },
+  { id: 'honey', label: 'Honey', icon: '🍯', desc: 'Natural sweetness' },
+  { id: 'stevia', label: 'Stevia', icon: '🌿', desc: 'Zero calorie' },
+  { id: 'dates', label: 'Date Syrup', icon: '🫐', desc: 'Traditional Arabic' },
+  { id: 'jaggery', label: 'Jaggery', icon: '🟫', desc: 'Unrefined cane' },
+  { id: 'none', label: 'No Sweetener', icon: '🚫', desc: 'Sugar-free' }
+];
+
+const healthConditions = [
+  { id: 'diabetes', label: 'Diabetes', icon: '💉', color: 'from-blue-400 to-blue-600', desc: 'Blood sugar management' },
+  { id: 'hypertension', label: 'High BP', icon: '❤️', color: 'from-red-400 to-red-600', desc: 'Low sodium needs' },
+  { id: 'cholesterol', label: 'High Cholesterol', icon: '🫀', color: 'from-orange-400 to-orange-600', desc: 'Heart-healthy fats' },
+  { id: 'thyroid', label: 'Thyroid', icon: '🦋', color: 'from-purple-400 to-purple-600', desc: 'Metabolic support' },
+  { id: 'pcos', label: 'PCOS', icon: '🌸', color: 'from-pink-400 to-pink-600', desc: 'Hormone balance' },
+  { id: 'ibs', label: 'IBS/Digestive', icon: '🌀', color: 'from-green-400 to-green-600', desc: 'Gut-friendly' },
+  { id: 'kidney', label: 'Kidney Issues', icon: '💚', color: 'from-teal-400 to-teal-600', desc: 'Low potassium' },
+  { id: 'pregnancy', label: 'Pregnancy', icon: '🤰', color: 'from-rose-400 to-rose-600', desc: 'Prenatal nutrition' }
+];
+
+const ingredientQuality = [
+  { 
+    id: 'standard', 
+    label: 'Standard', 
+    desc: 'Quality ingredients, economical choice',
+    price: '+AED 0',
+    priceMultiplier: 1.0,
+    icon: '⭐',
+    features: ['Fresh produce', 'Quality meats', 'Good value']
+  },
+  { 
+    id: 'premium', 
+    label: 'Premium', 
+    desc: 'Higher quality, select organic items',
+    price: '+AED 7/meal',
+    priceMultiplier: 1.3,
+    icon: '⭐⭐',
+    features: ['Better cuts', 'Some organic', 'Specialty items']
+  },
+  { 
+    id: 'organic', 
+    label: 'Organic', 
+    desc: 'Certified organic ingredients',
+    price: '+AED 13/meal',
+    priceMultiplier: 1.6,
+    icon: '⭐⭐⭐',
+    features: ['100% organic produce', 'Free-range', 'No pesticides']
+  },
+  { 
+    id: 'luxury', 
+    label: 'Luxury', 
+    desc: 'Premium organic, grass-fed, wild-caught',
+    price: '+AED 22/meal',
+    priceMultiplier: 2.0,
+    icon: '⭐⭐⭐⭐',
+    features: ['Grass-fed meats', 'Wild fish', 'Artisanal quality']
+  }
+];
+
+const texturePreferences = [
+  { id: 'soft', label: 'Soft & Tender', icon: '☁️', desc: 'Easy to chew, gentle' },
+  { id: 'regular', label: 'Regular', icon: '👌', desc: 'Balanced texture' },
+  { id: 'firm', label: 'Firm & Chunky', icon: '💪', desc: 'More substantial bite' },
+  { id: 'crispy', label: 'Crispy', icon: '✨', desc: 'Crunchy elements' }
+];
+
+const meatPreparations = [
+  { id: 'ground', label: 'Ground/Minced', icon: '🥩', desc: 'Fine texture' },
+  { id: 'cubed', label: 'Cubed', icon: '🔲', desc: 'Bite-sized pieces' },
+  { id: 'strips', label: 'Strips', icon: '📏', desc: 'Sliced thin' },
+  { id: 'whole', label: 'Whole Pieces', icon: '🍗', desc: 'Full cuts' }
+];
+
+const vegetableCuts = [
+  { id: 'fine', label: 'Finely Diced', icon: '▪️', desc: 'Small pieces' },
+  { id: 'medium', label: 'Medium Dice', icon: '◼️', desc: 'Standard cut' },
+  { id: 'chunky', label: 'Chunky', icon: '⬛', desc: 'Large pieces' },
+  { id: 'whole', label: 'Whole/Halved', icon: '🟫', desc: 'Minimal cutting' }
+];
+
+const deliveryWindows = [
+  { id: 'early', label: 'Early Morning', time: '5-7 AM', icon: '🌅', desc: 'Before work' },
+  { id: 'morning', label: 'Morning', time: '7-10 AM', icon: '☀️', desc: 'Breakfast time' },
+  { id: 'midday', label: 'Midday', time: '11 AM-1 PM', icon: '🌤️', desc: 'Lunch time' },
+  { id: 'afternoon', label: 'Afternoon', time: '2-5 PM', icon: '🌆', desc: 'After lunch' },
+  { id: 'evening', label: 'Evening', time: '6-8 PM', icon: '🌙', desc: 'Dinner time' },
+  { id: 'night', label: 'Late Night', time: '8-10 PM', icon: '⭐', desc: 'After work' }
+];
+
+const packagingTypes = [
+  { id: 'eco', label: 'Eco-Friendly', icon: '♻️', desc: 'Biodegradable containers', extra: '+AED 0' },
+  { id: 'glass', label: 'Glass Jars', icon: '🫙', desc: 'Returnable & reusable', extra: '+AED 5/meal' },
+  { id: 'microwave', label: 'Microwave-Safe', icon: '📦', desc: 'Easy reheat plastic', extra: '+AED 0' },
+  { id: 'traditional', label: 'Traditional Tiffin', icon: '🥘', desc: 'Steel containers', extra: '+AED 8/meal' }
+];
+
+const familyOptions = [
+  { value: 1, label: 'Just Me', icon: '👤', desc: 'Individual portions' },
+  { value: 2, label: '2 People', icon: '👥', desc: 'Couple/Pair' },
+  { value: 3, label: '3-4 People', icon: '👨‍👩‍👦', desc: 'Small family' },
+  { value: 5, label: '5+ People', icon: '👨‍👩‍👧‍👦', desc: 'Large family' }
+];
 
 // PART 2: Helper Functions
 // Add these functions inside your App component (after the data arrays)
@@ -198,6 +340,9 @@ const App = () => {
   // Submit Meal Plan
   const submitMealPlan = async () => {
     const macros = calculateMacrosFromInput();
+    const qualityMultiplier = ingredientQuality.find(q => q.id === mealData.ingredientQuality)?.priceMultiplier || 1;
+    const adjustedMonthlyCost = Math.round(macros.monthlyCost * qualityMultiplier);
+    
     const leadData = {
       name: mealData.name,
       email: mealData.email,
@@ -210,14 +355,17 @@ const App = () => {
       ).join(', '),
       allergens: mealData.allergens.join(', ') || 'None',
       calories: macros.calories,
-      monthly_cost: macros.monthlyCost,
+      monthly_cost: adjustedMonthlyCost,
       status: 'pending',
       meal_details: {
+        // Basic nutrition
         goal: mealData.goal,
         mealsPerDay: mealData.mealsPerDay,
         protein: macros.protein,
         carbs: macros.carbs,
         fat: macros.fat,
+        
+        // Cooking preferences
         cookingStyle: mealData.cookingStyle.map(id => 
           cookingStyles.find(s => s.id === id)?.label
         ),
@@ -226,12 +374,44 @@ const App = () => {
           mealTimings.find(t => t.id === id)?.label
         ),
         portionSize: mealData.portionSize,
+        
+        // NEW - Ingredient customizations
+        oilType: oilTypes.find(o => o.id === mealData.oilType)?.label,
+        saltType: saltTypes.find(s => s.id === mealData.saltType)?.label,
+        sweetenerType: sweetenerTypes.find(s => s.id === mealData.sweetenerType)?.label,
+        
+        // NEW - Health information
+        healthConditions: mealData.healthConditions.map(id =>
+          healthConditions.find(h => h.id === id)?.label
+        ),
+        healthNotes: mealData.healthNotes,
+        
+        // NEW - Quality & preparation
+        ingredientQuality: ingredientQuality.find(q => q.id === mealData.ingredientQuality)?.label,
+        texturePreference: texturePreferences.find(t => t.id === mealData.texturePreference)?.label,
+        meatPreparation: meatPreparations.find(m => m.id === mealData.meatPreparation)?.label,
+        vegetableCut: vegetableCuts.find(v => v.id === mealData.vegetableCut)?.label,
+        
+        // NEW - Delivery & family
+        deliveryWindow: deliveryWindows.find(d => d.id === mealData.deliveryWindow)?.label,
+        packagingType: packagingTypes.find(p => p.id === mealData.packagingType)?.label,
+        familyMembers: mealData.familyMembers,
+        
+        // NEW - Special options
+        kidsVersion: mealData.kidsVersion,
+        elderlyFriendly: mealData.elderlyFriendly,
+        separateComponents: mealData.separateComponents,
+        weeklyVariety: mealData.weeklyVariety,
+        seasonalPreference: mealData.seasonalPreference,
+        reheatingInstructions: mealData.reheatingInstructions,
+        
         specialInstructions: mealData.specialInstructions
       }
     };
   
+    console.log('Submitting enhanced lead:', leadData);
+  
     try {
-      // Insert into Supabase
       const { data, error } = await supabase
         .from('leads')
         .insert([leadData])
@@ -239,15 +419,15 @@ const App = () => {
   
       if (error) throw error;
   
-      // Add to local state
-      const newLead = { ...data[0], id: data[0].id, timestamp: new Date(data[0].created_at).toLocaleString() };
+      const newLead = { ...data[0], timestamp: new Date(data[0].created_at).toLocaleString() };
       setLeads(prev => [newLead, ...prev]);
       
-      setNotification('Success! Your meal plan request has been submitted.');
+      setNotification('Success! Your customized meal plan request has been submitted.');
       
       setTimeout(() => {
         setStep(0);
         setUserType(null);
+        // Reset to default state
         setMealData({
           name: '', email: '', phone: '', height: '', weight: '', age: '', 
           gender: 'male', activityLevel: '1.2', goal: 'maintain',
@@ -255,7 +435,15 @@ const App = () => {
           fatGrams: '', mealsPerDay: 3,
           cuisines: [], dietType: [], allergens: [], cookingStyle: [], 
           spiceLevel: 'medium', mealTiming: [], portionSize: 'regular', 
-          specialInstructions: ''
+          specialInstructions: '',
+          oilType: 'olive', saltType: 'regular', sweetenerType: 'sugar',
+          healthConditions: [], healthNotes: '',
+          ingredientQuality: 'standard', texturePreference: 'regular',
+          meatPreparation: 'cubed', vegetableCut: 'medium',
+          deliveryWindow: 'evening', packagingType: 'microwave',
+          separateComponents: false, familyMembers: 1,
+          kidsVersion: false, elderlyFriendly: false,
+          weeklyVariety: true, seasonalPreference: true, reheatingInstructions: true
         });
         setCalculatedData(null);
         setNotification('');
@@ -417,200 +605,386 @@ const App = () => {
   }
 
   // VENDOR DASHBOARD RENDER
-  if (userType === 'vendor') {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-4 py-12">
-        <div className="max-w-7xl mx-auto">
-          <button 
-            onClick={() => setUserType(null)}
-            className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-8 font-medium"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            Back to Home
-          </button>
+// VENDOR DASHBOARD RENDER
+if (userType === 'vendor') {
 
-          <div className="bg-white rounded-3xl p-10 shadow-2xl">
-            <div className="flex items-center justify-between mb-10">
-              <div>
-                <h2 className="text-4xl font-bold text-gray-800 mb-2">Vendor Dashboard</h2>
-                <p className="text-gray-600 text-lg">
-                  {leads.filter(l => l.status === 'pending').length} available leads
-                </p>
-              </div>
-              <div className="p-5 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-3xl">
-                <ChefHat className="w-12 h-12 text-white" />
-              </div>
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-4 py-12">
+      <div className="max-w-7xl mx-auto">
+        <button 
+          onClick={() => setUserType(null)}
+          className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-8 font-medium"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          Back to Home
+        </button>
+
+        <div className="bg-white rounded-3xl p-10 shadow-2xl">
+          <div className="flex items-center justify-between mb-10">
+            <div>
+              <h2 className="text-4xl font-bold text-gray-800 mb-2">Vendor Dashboard</h2>
+              <p className="text-gray-600 text-lg">
+                {leads.filter(l => l.status === 'pending').length} available leads
+              </p>
             </div>
+            <div className="p-5 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-3xl">
+              <ChefHat className="w-12 h-12 text-white" />
+            </div>
+          </div>
 
-            {leads.length === 0 ? (
-              <div className="text-center py-20">
-                <ChefHat className="w-20 h-20 text-gray-300 mx-auto mb-6" />
-                <p className="text-gray-500 text-xl font-medium">No leads available yet</p>
-                <p className="text-gray-400 mt-2">Check back soon for new requests</p>
-              </div>
-            ) : (
-              <div className="space-y-6">
-                {leads.map(lead => (
-                  <div 
-                    key={lead.id}
-                    className={`border-2 rounded-3xl p-8 transition-all ${
-                      lead.status === 'claimed'
-                        ? 'border-green-300 bg-gradient-to-br from-green-50 to-emerald-50'
-                        : 'border-gray-200 hover:shadow-xl'
-                    }`}
-                  >
-                    <div className="flex justify-between items-start mb-6">
-                      <div>
-                        <h3 className="text-2xl font-bold text-gray-800">
-                          Order #{lead.id.slice(-8).toUpperCase()}
-                        </h3>
-                        <p className="text-gray-500">{lead.timestamp}</p>
+          {leads.length === 0 ? (
+            <div className="text-center py-20">
+              <ChefHat className="w-20 h-20 text-gray-300 mx-auto mb-6" />
+              <p className="text-gray-500 text-xl font-medium">No leads available yet</p>
+              <p className="text-gray-400 mt-2">Check back soon for new requests</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {leads.map(lead => (
+                <div 
+                  key={lead.id}
+                  className={`border-2 rounded-2xl transition-all overflow-hidden ${
+                    lead.status === 'claimed'
+                      ? 'border-green-300 bg-gradient-to-br from-green-50 to-emerald-50'
+                      : 'border-gray-200 hover:shadow-lg'
+                  }`}
+                >
+                  {/* Compact Header - Always Visible */}
+                  <div className="p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-4">
+                        <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-pink-500 rounded-2xl flex items-center justify-center text-3xl">
+                          {lead.cuisine?.split(',')[0] ? cuisines.find(c => c.label === lead.cuisine.split(',')[0].trim())?.icon || '🍽️' : '🍽️'}
+                        </div>
+                        <div>
+                          <h3 className="text-xl font-bold text-gray-800">
+                            Order #{lead.id.slice(-8).toUpperCase()}
+                          </h3>
+                          <p className="text-sm text-gray-500">{lead.timestamp}</p>
+                        </div>
                       </div>
-                      <span className={`px-6 py-3 rounded-full text-sm font-bold ${
+                      <span className={`px-4 py-2 rounded-full text-sm font-bold ${
                         lead.status === 'claimed' 
                           ? 'bg-green-200 text-green-800' 
                           : 'bg-orange-200 text-orange-800'
                       }`}>
-                        {lead.status === 'claimed' ? 'Claimed' : 'Available'}
+                        {lead.status === 'claimed' ? '✓ Claimed' : 'Available'}
                       </span>
                     </div>
 
-                    <div className="grid md:grid-cols-4 gap-6 mb-6">
-                      <div className="bg-gradient-to-br from-orange-50 to-pink-50 rounded-2xl p-5 text-center">
-                        <Flame className="w-8 h-8 text-orange-500 mx-auto mb-2" />
-                        <div className="text-2xl font-bold">{lead.calories}</div>
-                        <div className="text-sm text-gray-600">Cal/day</div>
+                    {/* Key Stats - Always Visible */}
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
+                      <div className="bg-white rounded-xl p-3 text-center border border-gray-200">
+                        <div className="text-2xl font-bold text-green-600">AED {lead.monthly_cost}</div>
+                        <div className="text-xs text-gray-600">Monthly</div>
                       </div>
-                      <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-5 text-center">
-                        <Pizza className="w-8 h-8 text-green-500 mx-auto mb-2" />
-                        <div className="text-2xl font-bold">
-                          {lead.cuisine?.split(',').length || 1}
-                        </div>
-                        <div className="text-sm text-gray-600">Cuisines</div>
+                      <div className="bg-white rounded-xl p-3 text-center border border-gray-200">
+                        <div className="text-2xl font-bold text-orange-600">{lead.calories}</div>
+                        <div className="text-xs text-gray-600">Calories</div>
                       </div>
-                      <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-5 text-center">
-                        <Clock className="w-8 h-8 text-blue-500 mx-auto mb-2" />
-                        <div className="text-2xl font-bold">
-                          {lead.meal_details?.mealsPerDay || 3}
-                        </div>
-                        <div className="text-sm text-gray-600">Meals/day</div>
+                      <div className="bg-white rounded-xl p-3 text-center border border-gray-200">
+                        <div className="text-2xl font-bold text-blue-600">{lead.meal_details?.mealsPerDay || 3}</div>
+                        <div className="text-xs text-gray-600">Meals/day</div>
                       </div>
-                      <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-5 text-center">
-                        <Target className="w-8 h-8 text-purple-500 mx-auto mb-2" />
-                        <div className="text-2xl font-bold capitalize">
-                          {lead.meal_details?.goal || 'N/A'}
-                        </div>
-                        <div className="text-sm text-gray-600">Goal</div>
+                      <div className="bg-white rounded-xl p-3 text-center border border-gray-200">
+                        <div className="text-2xl font-bold text-purple-600">{lead.meal_details?.familyMembers || 1}</div>
+                        <div className="text-xs text-gray-600">People</div>
+                      </div>
+                      <div className="bg-white rounded-xl p-3 text-center border border-gray-200">
+                        <div className="text-lg font-bold text-gray-800 capitalize">{lead.meal_details?.goal || 'N/A'}</div>
+                        <div className="text-xs text-gray-600">Goal</div>
                       </div>
                     </div>
 
-                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-6 mb-6 border-2 border-green-200">
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-700 font-medium">Monthly Value</span>
-                        <span className="text-4xl font-bold text-green-600">
-                          AED {lead.monthly_cost}
+                    {/* Quick Info Tags */}
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {lead.cuisine && lead.cuisine.split(',').slice(0, 2).map((c, i) => (
+                        <span key={i} className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-medium">
+                          {c.trim()}
                         </span>
-                      </div>
+                      ))}
+                      {lead.meal_details?.ingredientQuality && lead.meal_details.ingredientQuality !== 'Standard' && (
+                        <span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-medium">
+                          ⭐ {lead.meal_details.ingredientQuality}
+                        </span>
+                      )}
+                      {lead.meal_details?.healthConditions && lead.meal_details.healthConditions.length > 0 && (
+                        <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-medium">
+                          💊 {lead.meal_details.healthConditions.length} Health Note{lead.meal_details.healthConditions.length > 1 ? 's' : ''}
+                        </span>
+                      )}
+                      {lead.allergens !== 'None' && (
+                        <span className="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-xs font-medium">
+                          ⚠️ Allergens
+                        </span>
+                      )}
                     </div>
 
-                    <div className="grid md:grid-cols-3 gap-6 mb-6">
-                      <div>
-                        <div className="text-xs font-bold text-gray-500 mb-2">CUISINES</div>
-                        <div className="text-gray-800 font-medium">
-                          {lead.cuisine || 'Not specified'}
+                    {/* Expand/Collapse Button */}
+                    <button
+                      onClick={() => setExpandedLead(expandedLead === lead.id ? null : lead.id)}
+                      className="w-full py-3 bg-gray-100 hover:bg-gray-200 rounded-xl font-medium text-gray-700 transition-all flex items-center justify-center gap-2"
+                    >
+                      {expandedLead === lead.id ? (
+                        <>
+                          Hide Details
+                          <ArrowLeft className="w-4 h-4 rotate-90" />
+                        </>
+                      ) : (
+                        <>
+                          View Full Details
+                          <ArrowRight className="w-4 h-4 rotate-90" />
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Expanded Details - Collapsible */}
+                  {expandedLead === lead.id && (
+                    <div className="border-t-2 border-gray-200 bg-gray-50 p-6 space-y-4 animate-slideDown">
+                      {/* Macros */}
+                      <div className="bg-white rounded-xl p-4">
+                        <div className="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                          <Flame className="w-5 h-5 text-orange-500" />
+                          Daily Macros
+                        </div>
+                        <div className="grid grid-cols-3 gap-4 text-center">
+                          <div>
+                            <div className="text-xl font-bold text-orange-600">{lead.meal_details?.protein || 0}g</div>
+                            <div className="text-xs text-gray-600">Protein</div>
+                          </div>
+                          <div>
+                            <div className="text-xl font-bold text-yellow-600">{lead.meal_details?.carbs || 0}g</div>
+                            <div className="text-xs text-gray-600">Carbs</div>
+                          </div>
+                          <div>
+                            <div className="text-xl font-bold text-blue-600">{lead.meal_details?.fat || 0}g</div>
+                            <div className="text-xs text-gray-600">Fat</div>
+                          </div>
                         </div>
                       </div>
-                      <div>
-                        <div className="text-xs font-bold text-gray-500 mb-2">DIET TYPE</div>
-                        <div className="text-gray-800 font-medium">
-                          {lead.diet_type || 'None'}
+
+                      {/* Two Column Layout for Details */}
+                      <div className="grid md:grid-cols-2 gap-4">
+                        {/* Left Column */}
+                        <div className="space-y-4">
+                          {/* Ingredients */}
+                          {(lead.meal_details?.oilType || lead.meal_details?.saltType) && (
+                            <div className="bg-white rounded-xl p-4">
+                              <div className="font-bold text-gray-800 mb-2 flex items-center gap-2">
+                                <Droplets className="w-4 h-4 text-amber-600" />
+                                Ingredients
+                              </div>
+                              <div className="text-sm space-y-1">
+                                {lead.meal_details?.oilType && (
+                                  <div>🫒 <span className="text-gray-600">Oil:</span> <span className="font-medium">{lead.meal_details.oilType}</span></div>
+                                )}
+                                {lead.meal_details?.saltType && (
+                                  <div>🧂 <span className="text-gray-600">Salt:</span> <span className="font-medium">{lead.meal_details.saltType}</span></div>
+                                )}
+                                {lead.meal_details?.sweetenerType && (
+                                  <div>🍯 <span className="text-gray-600">Sweet:</span> <span className="font-medium">{lead.meal_details.sweetenerType}</span></div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Preparation */}
+                          {(lead.meal_details?.texturePreference || lead.meal_details?.meatPreparation) && (
+                            <div className="bg-white rounded-xl p-4">
+                              <div className="font-bold text-gray-800 mb-2 flex items-center gap-2">
+                                <Utensils className="w-4 h-4 text-green-600" />
+                                Preparation
+                              </div>
+                              <div className="text-sm space-y-1">
+                                {lead.meal_details?.texturePreference && (
+                                  <div>☁️ <span className="text-gray-600">Texture:</span> <span className="font-medium">{lead.meal_details.texturePreference}</span></div>
+                                )}
+                                {lead.meal_details?.meatPreparation && (
+                                  <div>🥩 <span className="text-gray-600">Meat:</span> <span className="font-medium">{lead.meal_details.meatPreparation}</span></div>
+                                )}
+                                {lead.meal_details?.vegetableCut && (
+                                  <div>🥕 <span className="text-gray-600">Veggies:</span> <span className="font-medium">{lead.meal_details.vegetableCut}</span></div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Allergens */}
+                          {lead.allergens && lead.allergens !== 'None' && (
+                            <div className="bg-white rounded-xl p-4">
+                              <div className="font-bold text-gray-800 mb-2 flex items-center gap-2">
+                                <ShieldCheck className="w-4 h-4 text-red-600" />
+                                Avoid
+                              </div>
+                              <div className="text-sm text-gray-700">{lead.allergens}</div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Right Column */}
+                        <div className="space-y-4">
+                          {/* Delivery */}
+                          {lead.meal_details?.deliveryWindow && (
+                            <div className="bg-white rounded-xl p-4">
+                              <div className="font-bold text-gray-800 mb-2 flex items-center gap-2">
+                                <Clock className="w-4 h-4 text-blue-600" />
+                                Delivery
+                              </div>
+                              <div className="text-sm space-y-1">
+                                <div>🕐 <span className="text-gray-600">Time:</span> <span className="font-medium">{lead.meal_details.deliveryWindow}</span></div>
+                                {lead.meal_details?.packagingType && (
+                                  <div>📦 <span className="text-gray-600">Pack:</span> <span className="font-medium">{lead.meal_details.packagingType}</span></div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Cooking Prefs */}
+                          {lead.meal_details?.spiceLevel && (
+                            <div className="bg-white rounded-xl p-4">
+                              <div className="font-bold text-gray-800 mb-2 flex items-center gap-2">
+                                <UtensilsCrossed className="w-4 h-4 text-orange-600" />
+                                Cooking
+                              </div>
+                              <div className="text-sm space-y-1">
+                                <div>🌶️ <span className="text-gray-600">Spice:</span> <span className="font-medium capitalize">{lead.meal_details.spiceLevel}</span></div>
+                                {lead.meal_details?.cookingStyle && lead.meal_details.cookingStyle.length > 0 && (
+                                  <div>🍳 <span className="text-gray-600">Style:</span> <span className="font-medium">{lead.meal_details.cookingStyle.slice(0, 2).join(', ')}</span></div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Diet Type */}
+                          {lead.diet_type && lead.diet_type !== 'None' && (
+                            <div className="bg-white rounded-xl p-4">
+                              <div className="font-bold text-gray-800 mb-2 flex items-center gap-2">
+                                <Pizza className="w-4 h-4 text-green-600" />
+                                Diet
+                              </div>
+                              <div className="text-sm text-gray-700">{lead.diet_type}</div>
+                            </div>
+                          )}
                         </div>
                       </div>
-                      <div>
-                        <div className="text-xs font-bold text-gray-500 mb-2">ALLERGENS</div>
-                        <div className="text-gray-800 font-medium">{lead.allergens}</div>
-                      </div>
-                      {lead.meal_details?.cookingStyle?.length > 0 && (
-                        <div>
-                          <div className="text-xs font-bold text-gray-500 mb-2">COOKING</div>
-                          <div className="text-gray-800 font-medium">
-                            {lead.meal_details.cookingStyle.join(', ')}
+
+                      {/* Health Conditions - Full Width if Present */}
+                      {lead.meal_details?.healthConditions && lead.meal_details.healthConditions.length > 0 && (
+                        <div className="bg-red-50 rounded-xl p-4 border-2 border-red-200">
+                          <div className="font-bold text-red-800 mb-2 flex items-center gap-2">
+                            <Shield className="w-5 h-5" />
+                            Health Conditions
+                          </div>
+                          <div className="flex flex-wrap gap-2 mb-2">
+                            {lead.meal_details.healthConditions.map((condition, i) => (
+                              <span key={i} className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-medium">
+                                {condition}
+                              </span>
+                            ))}
+                          </div>
+                          {lead.meal_details?.healthNotes && (
+                            <div className="text-sm text-gray-700 bg-white rounded-lg p-3 mt-2">
+                              <strong>Notes:</strong> {lead.meal_details.healthNotes}
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Special Preferences */}
+                      {(lead.meal_details?.kidsVersion || lead.meal_details?.elderlyFriendly || lead.meal_details?.separateComponents) && (
+                        <div className="bg-white rounded-xl p-4">
+                          <div className="font-bold text-gray-800 mb-2 flex items-center gap-2">
+                            <Sparkles className="w-4 h-4 text-indigo-600" />
+                            Special Needs
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            {lead.meal_details?.kidsVersion && (
+                              <span className="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-xs font-medium">
+                                👶 Kids Friendly
+                              </span>
+                            )}
+                            {lead.meal_details?.elderlyFriendly && (
+                              <span className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-medium">
+                                👴 Elderly Friendly
+                              </span>
+                            )}
+                            {lead.meal_details?.separateComponents && (
+                              <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-medium">
+                                📦 Separate Packing
+                              </span>
+                            )}
                           </div>
                         </div>
                       )}
-                      {lead.meal_details?.spiceLevel && (
-                        <div>
-                          <div className="text-xs font-bold text-gray-500 mb-2">SPICE</div>
-                          <div className="text-gray-800 font-medium capitalize">
-                            {lead.meal_details.spiceLevel}
+
+                      {/* Special Instructions */}
+                      {lead.meal_details?.specialInstructions && (
+                        <div className="bg-yellow-50 rounded-xl p-4 border border-yellow-200">
+                          <div className="font-bold text-yellow-900 mb-2 flex items-center gap-2">
+                            <MessageCircle className="w-4 h-4" />
+                            Special Instructions
+                          </div>
+                          <div className="text-sm text-gray-700">
+                            {lead.meal_details.specialInstructions}
                           </div>
                         </div>
                       )}
-                      <div>
-                        <div className="text-xs font-bold text-gray-500 mb-2">MACROS</div>
-                        <div className="text-gray-800 font-medium text-sm">
-                          P:{lead.meal_details?.protein}g C:{lead.meal_details?.carbs}g F:{lead.meal_details?.fat}g
-                        </div>
-                      </div>
                     </div>
+                  )}
 
-                    {lead.meal_details?.specialInstructions && (
-                      <div className="bg-gray-50 rounded-2xl p-5 mb-6">
-                        <div className="text-xs font-bold text-gray-500 mb-2">
-                          SPECIAL INSTRUCTIONS
-                        </div>
-                        <div className="text-gray-700">
-                          {lead.meal_details.specialInstructions}
-                        </div>
-                      </div>
-                    )}
-
+                  {/* Action Button */}
+                  <div className="p-6 pt-0">
                     {lead.status === 'pending' ? (
                       <button 
                         onClick={() => claimLead(lead.id)}
-                        className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-4 rounded-2xl font-bold text-lg hover:shadow-xl transition-all"
+                        className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-4 rounded-xl font-bold text-lg hover:shadow-xl transition-all"
                       >
                         Claim This Lead
                       </button>
                     ) : (
-                      <div className="bg-gradient-to-br from-green-100 to-emerald-100 border-2 border-green-300 rounded-2xl p-6">
-                        <div className="font-bold text-green-800 mb-3">Contact Customer</div>
-                        <div className="space-y-2">
+                      <div className="bg-white border-2 border-green-300 rounded-xl p-4">
+                        <div className="font-bold text-green-800 mb-3 flex items-center gap-2">
+                          <Check className="w-5 h-5" />
+                          Contact Customer
+                        </div>
+                        <div className="space-y-2 text-sm">
                           <div className="flex items-center gap-3">
-                            <User className="w-5 h-5 text-green-600" />
-                            <span className="text-green-800 font-medium">{lead.name}</span>
+                            <User className="w-4 h-4 text-green-600" />
+                            <span className="text-gray-700">{lead.name}</span>
                           </div>
                           <div className="flex items-center gap-3">
-                            <Mail className="w-5 h-5 text-green-600" />
-                            <span className="text-green-700">{lead.email}</span>
+                            <Mail className="w-4 h-4 text-green-600" />
+                            <a href={`mailto:${lead.email}`} className="text-blue-600 hover:underline">{lead.email}</a>
                           </div>
                           {lead.phone && (
                             <div className="flex items-center gap-3">
-                              <MessageCircle className="w-5 h-5 text-green-600" />
-                              <span className="text-green-700">{lead.phone}</span>
+                              <MessageCircle className="w-4 h-4 text-green-600" />
+                              <a href={`tel:${lead.phone}`} className="text-blue-600 hover:underline">{lead.phone}</a>
                             </div>
                           )}
                         </div>
                       </div>
                     )}
                   </div>
-                ))}
-              </div>
-            )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {notification && (
+        <div className="fixed top-8 right-8 bg-white border-l-4 border-green-500 px-8 py-5 rounded-2xl shadow-2xl z-50">
+          <div className="flex items-center gap-4">
+            <Check className="w-6 h-6 text-green-600" />
+            <div>{notification}</div>
           </div>
         </div>
-
-        {notification && (
-          <div className="fixed top-8 right-8 bg-white border-l-4 border-green-500 px-8 py-5 rounded-2xl shadow-2xl z-50">
-            <div className="flex items-center gap-4">
-              <Check className="w-6 h-6 text-green-600" />
-              <div>{notification}</div>
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  }
+      )}
+    </div>
+  );
+}
   
   // PART 4: Customer Wizard - Steps 0, 1, 2
 // Add this after the vendor dashboard (continuing the main return statement)
@@ -627,7 +1001,7 @@ const App = () => {
           Back
         </button>
 
-        <WizardProgress current={step + 1} total={6} />
+        <WizardProgress current={step + 1} total={10} />
 
         {/* STEP 0: Personal Info */}
         {step === 0 && (
@@ -1126,120 +1500,1047 @@ const App = () => {
             </div>
 
             <button 
-              onClick={() => setStep(5)}
-              className="w-full mt-10 bg-gradient-to-r from-orange-400 to-pink-500 text-white py-5 rounded-2xl font-bold text-lg hover:shadow-xl transition-all flex items-center justify-center gap-3"
-            >
-              Review & Submit
-              <ArrowRight className="w-6 h-6" />
-            </button>
+  onClick={() => setStep(6)}
+  className="w-full mt-10 bg-gradient-to-r from-orange-400 to-pink-500 text-white py-5 rounded-2xl font-bold text-lg hover:shadow-xl transition-all flex items-center justify-center gap-3"
+>
+  Continue to Ingredients
+  <ArrowRight className="w-6 h-6" />
+</button>
           </div>
         )}
 
         {/* STEP 5: Review & Submit */}
-        {step === 5 && (() => {
-          const macros = calculateMacrosFromInput();
-          return (
-            <div className="bg-white rounded-3xl p-10 shadow-2xl max-w-4xl mx-auto">
-              <div className="text-center mb-10">
-                <div className="inline-block p-5 bg-gradient-to-br from-green-400 to-emerald-500 rounded-3xl mb-6">
-                  <Check className="w-12 h-12 text-white" />
-                </div>
-                <h2 className="text-4xl font-bold text-gray-800 mb-3">Review Your Plan</h2>
-                <p className="text-gray-600">Confirm your meal plan details</p>
+{/* STEP 5: Enhanced Review & Submit */}
+{step === 10 && (() => {
+  const macros = calculateMacrosFromInput();
+  const qualityMultiplier = ingredientQuality.find(q => q.id === mealData.ingredientQuality)?.priceMultiplier || 1;
+  const adjustedMonthlyCost = Math.round(macros.monthlyCost * qualityMultiplier);
+  
+  return (
+    <div className="bg-white rounded-3xl p-10 shadow-2xl max-w-6xl mx-auto">
+      <div className="text-center mb-10">
+        <div className="inline-block p-6 bg-gradient-to-br from-green-400 to-emerald-500 rounded-3xl mb-6 animate-bounce">
+          <Check className="w-14 h-14 text-white" />
+        </div>
+        <h2 className="text-5xl font-black bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-4">
+          Your Perfect Plan
+        </h2>
+        <p className="text-xl text-gray-600">Review your customized meal experience</p>
+      </div>
+
+      <div className="space-y-6">
+        {/* Pricing Hero Card */}
+        <div className="bg-gradient-to-br from-green-400 via-emerald-500 to-teal-500 rounded-3xl p-10 text-white text-center relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl" />
+          <div className="relative">
+            <div className="text-sm font-bold mb-2 opacity-90">Your Monthly Investment</div>
+            <div className="text-7xl font-black mb-3">AED {adjustedMonthlyCost}</div>
+            <div className="text-lg opacity-90">{mealData.mealsPerDay} meals/day × 30 days × {mealData.familyMembers} {mealData.familyMembers > 1 ? 'people' : 'person'}</div>
+            {qualityMultiplier > 1 && (
+              <div className="mt-4 inline-block bg-white/20 backdrop-blur-sm px-6 py-3 rounded-full">
+                <span className="text-sm font-bold">
+                  {ingredientQuality.find(q => q.id === mealData.ingredientQuality)?.label} Quality Selected
+                </span>
               </div>
+            )}
+          </div>
+        </div>
 
-              <div className="space-y-6">
-                <div className="bg-gradient-to-br from-orange-50 to-pink-50 rounded-2xl p-8">
-                  <h3 className="text-2xl font-bold text-gray-800 mb-6">Daily Nutrition</h3>
-                  <div className="grid md:grid-cols-4 gap-6">
-                    {[
-                      { icon: Flame, value: macros.calories, label: 'Calories', color: 'text-orange-500' },
-                      { icon: Egg, value: `${macros.protein}g`, label: 'Protein', color: 'text-orange-600' },
-                      { icon: Cookie, value: `${macros.carbs}g`, label: 'Carbs', color: 'text-yellow-600' },
-                      { icon: Droplets, value: `${macros.fat}g`, label: 'Fat', color: 'text-blue-600' }
-                    ].map((item, i) => (
-                      <div key={i} className="text-center">
-                        <div className="inline-block p-4 bg-white rounded-2xl mb-3 shadow-sm">
-                          <item.icon className={`w-8 h-8 ${item.color}`} />
-                        </div>
-                        <div className="text-3xl font-bold text-gray-800">{item.value}</div>
-                        <div className="text-sm text-gray-600 mt-1">{item.label}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-8 text-center">
-                  <div className="text-sm font-bold text-green-700 mb-2">Monthly Investment</div>
-                  <div className="text-5xl font-bold text-green-600 mb-2">AED {macros.monthlyCost}</div>
-                  <div className="text-sm text-green-700">{mealData.mealsPerDay} meals per day × 30 days</div>
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="bg-gray-50 rounded-2xl p-6">
-                    <h4 className="font-bold text-gray-800 mb-4">Personal Info</h4>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Name:</span>
-                        <span className="font-medium text-gray-800">{mealData.name}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Email:</span>
-                        <span className="font-medium text-gray-800">{mealData.email}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Phone:</span>
-                        <span className="font-medium text-gray-800">{mealData.phone}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-gray-50 rounded-2xl p-6">
-                    <h4 className="font-bold text-gray-800 mb-4">Preferences</h4>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Cuisines:</span>
-                        <span className="font-medium text-gray-800">{mealData.cuisines.length} selected</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Spice:</span>
-                        <span className="font-medium text-gray-800 capitalize">{mealData.spiceLevel}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Goal:</span>
-                        <span className="font-medium text-gray-800 capitalize">{mealData.goal}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-3">Special Instructions (Optional)</label>
-                  <textarea
-                    value={mealData.specialInstructions}
-                    onChange={(e) => setMealData({ ...mealData, specialInstructions: e.target.value })}
-                    className="w-full px-6 py-4 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-orange-200 focus:border-orange-400 transition-all resize-none"
-                    rows="4"
-                    placeholder="Any additional preferences, delivery notes, or special requests..."
-                  />
-                </div>
+        {/* Nutrition Overview */}
+        <div className="bg-gradient-to-br from-orange-50 to-pink-50 rounded-3xl p-8 border-2 border-orange-200">
+          <h3 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+            <Flame className="w-7 h-7 text-orange-600" />
+            Daily Nutrition Targets
+          </h3>
+          <div className="grid md:grid-cols-4 gap-6">
+            {[
+              { icon: Flame, value: macros.calories, label: 'Calories', color: 'text-orange-500', bg: 'from-orange-100 to-orange-50' },
+              { icon: Egg, value: `${macros.protein}g`, label: 'Protein', color: 'text-red-500', bg: 'from-red-100 to-red-50' },
+              { icon: Cookie, value: `${macros.carbs}g`, label: 'Carbs', color: 'text-yellow-500', bg: 'from-yellow-100 to-yellow-50' },
+              { icon: Droplets, value: `${macros.fat}g`, label: 'Fat', color: 'text-blue-500', bg: 'from-blue-100 to-blue-50' }
+            ].map((item, i) => (
+              <div key={i} className={`bg-gradient-to-br ${item.bg} rounded-2xl p-6 text-center`}>
+                <item.icon className={`w-10 h-10 ${item.color} mx-auto mb-3`} />
+                <div className="text-4xl font-bold text-gray-800 mb-1">{item.value}</div>
+                <div className="text-sm text-gray-600 font-medium">{item.label}</div>
               </div>
+            ))}
+          </div>
+        </div>
 
-              <button 
-                onClick={submitMealPlan}
-                className="w-full mt-10 bg-gradient-to-r from-green-400 to-emerald-500 text-white py-6 rounded-2xl font-bold text-xl hover:shadow-2xl transition-all flex items-center justify-center gap-3"
-              >
-                <Check className="w-7 h-7" />
-                Submit Meal Plan Request
-              </button>
+        {/* Personal & Preferences Grid */}
+{/* Personal & Preferences - More Compact */}
+<div className="grid md:grid-cols-3 gap-4">
+  <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-200">
+    <h4 className="font-bold text-gray-800 mb-3 text-sm flex items-center gap-2">
+      <User className="w-4 h-4 text-blue-600" />
+      Personal
+    </h4>
+    <div className="space-y-1.5 text-xs">
+      <div><span className="text-gray-600">Name:</span> <span className="font-medium text-gray-900">{mealData.name}</span></div>
+      <div><span className="text-gray-600">Email:</span> <span className="font-medium text-gray-900 truncate block">{mealData.email}</span></div>
+      <div><span className="text-gray-600">Phone:</span> <span className="font-medium text-gray-900">{mealData.phone}</span></div>
+      <div><span className="text-gray-600">Goal:</span> <span className="font-medium text-gray-900 capitalize">{mealData.goal}</span></div>
+    </div>
+  </div>
 
-              <div className="mt-6 flex items-center justify-center gap-3 text-sm text-gray-600">
-                <ShieldCheck className="w-5 h-5 text-green-500" />
-                <span>Vendors will contact you within 24 hours</span>
+  <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-5 border border-purple-200">
+    <h4 className="font-bold text-gray-800 mb-3 text-sm flex items-center gap-2">
+      <Pizza className="w-4 h-4 text-purple-600" />
+      Cuisine
+    </h4>
+    <div className="space-y-1.5 text-xs">
+      <div className="flex flex-wrap gap-1">
+        {mealData.cuisines.slice(0, 4).map(id => (
+          <span key={id} className="bg-purple-100 text-purple-700 px-2 py-0.5 rounded text-xs font-medium">
+            {cuisines.find(c => c.id === id)?.label}
+          </span>
+        ))}
+      </div>
+      {mealData.dietType.length > 0 && (
+        <div className="flex flex-wrap gap-1 mt-2">
+          {mealData.dietType.map(id => (
+            <span key={id} className="bg-green-100 text-green-700 px-2 py-0.5 rounded text-xs font-medium">
+              {dietTypes.find(d => d.id === id)?.label}
+            </span>
+          ))}
+        </div>
+      )}
+      <div className="mt-2"><span className="text-gray-600">Spice:</span> <span className="font-medium capitalize">{mealData.spiceLevel}</span></div>
+    </div>
+  </div>
+
+  <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-5 border border-amber-200">
+    <h4 className="font-bold text-gray-800 mb-3 text-sm flex items-center gap-2">
+      <Droplets className="w-4 h-4 text-amber-600" />
+      Ingredients
+    </h4>
+    <div className="space-y-1.5 text-xs">
+      <div><span className="text-gray-600">Oil:</span> <span className="font-medium">{oilTypes.find(o => o.id === mealData.oilType)?.label}</span></div>
+      <div><span className="text-gray-600">Salt:</span> <span className="font-medium">{saltTypes.find(s => s.id === mealData.saltType)?.label}</span></div>
+      <div><span className="text-gray-600">Sweet:</span> <span className="font-medium">{sweetenerTypes.find(s => s.id === mealData.sweetenerType)?.label}</span></div>
+      <div><span className="text-gray-600">Quality:</span> <span className="font-medium">{ingredientQuality.find(q => q.id === mealData.ingredientQuality)?.label}</span></div>
+    </div>
+  </div>
+</div>
+
+        {/* Health Conditions (if any) */}
+        {mealData.healthConditions.length > 0 && (
+          <div className="bg-gradient-to-br from-red-50 to-rose-50 rounded-2xl p-6 border-2 border-red-200">
+            <h4 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <Shield className="w-5 h-5 text-red-600" />
+              Health Considerations
+            </h4>
+            <div className="flex flex-wrap gap-2">
+              {mealData.healthConditions.map(id => {
+                const condition = healthConditions.find(h => h.id === id);
+                return (
+                  <span key={id} className={`bg-gradient-to-r ${condition?.color} text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg`}>
+                    {condition?.icon} {condition?.label}
+                  </span>
+                );
+              })}
+            </div>
+            {mealData.healthNotes && (
+              <div className="mt-4 bg-white rounded-xl p-4 text-sm text-gray-700">
+                <strong>Notes:</strong> {mealData.healthNotes}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Preparation Preferences */}
+        <div className="grid md:grid-cols-2 gap-6">
+          <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 border-2 border-green-200">
+            <h4 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <Utensils className="w-5 h-5 text-green-600" />
+              Preparation Style
+            </h4>
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-gray-600">Texture:</span>
+                <span className="font-medium text-gray-800 capitalize">
+                  {texturePreferences.find(t => t.id === mealData.texturePreference)?.label}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Meat Cut:</span>
+                <span className="font-medium text-gray-800 capitalize">
+                  {meatPreparations.find(m => m.id === mealData.meatPreparation)?.label}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Vegetable Cut:</span>
+                <span className="font-medium text-gray-800 capitalize">
+                  {vegetableCuts.find(v => v.id === mealData.vegetableCut)?.label}
+                </span>
               </div>
             </div>
-          );
-        })()}
+          </div>
+
+          <div className="bg-gradient-to-br from-cyan-50 to-blue-50 rounded-2xl p-6 border-2 border-cyan-200">
+            <h4 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <Clock className="w-5 h-5 text-cyan-600" />
+              Delivery & Packaging
+            </h4>
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-gray-600">Time:</span>
+                <span className="font-medium text-gray-800 capitalize">
+                  {deliveryWindows.find(d => d.id === mealData.deliveryWindow)?.label}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Packaging:</span>
+                <span className="font-medium text-gray-800 capitalize">
+                  {packagingTypes.find(p => p.id === mealData.packagingType)?.label}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Family Size:</span>
+                <span className="font-medium text-gray-800">
+                  {mealData.familyMembers} {mealData.familyMembers > 1 ? 'people' : 'person'}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Special Options (if any selected) */}
+        {(mealData.kidsVersion || mealData.elderlyFriendly || mealData.separateComponents || mealData.weeklyVariety || mealData.seasonalPreference) && (
+          <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-6 border-2 border-indigo-200">
+            <h4 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-indigo-600" />
+              Special Preferences
+            </h4>
+            <div className="flex flex-wrap gap-2">
+              {mealData.kidsVersion && (
+                <span className="bg-orange-100 text-orange-700 px-4 py-2 rounded-full text-sm font-medium">
+                  👶 Kids Version
+                </span>
+              )}
+              {mealData.elderlyFriendly && (
+                <span className="bg-purple-100 text-purple-700 px-4 py-2 rounded-full text-sm font-medium">
+                  👴 Elderly-Friendly
+                </span>
+              )}
+              {mealData.separateComponents && (
+                <span className="bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-medium">
+                  📦 Separate Components
+                </span>
+              )}
+              {mealData.weeklyVariety && (
+                <span className="bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-medium">
+                  🔄 Weekly Variety
+                </span>
+              )}
+              {mealData.seasonalPreference && (
+                <span className="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-medium">
+                  🌿 Seasonal Ingredients
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Allergens (if any) */}
+        {mealData.allergens.length > 0 && (
+          <div className="bg-gradient-to-br from-red-50 to-orange-50 rounded-2xl p-6 border-2 border-red-200">
+            <h4 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <ShieldCheck className="w-5 h-5 text-red-600" />
+              Allergens to Avoid
+            </h4>
+            <div className="flex flex-wrap gap-2">
+              {mealData.allergens.map(allergen => (
+                <span key={allergen} className="bg-red-100 text-red-700 px-4 py-2 rounded-full text-sm font-medium">
+                  🚫 {allergen}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Special Instructions */}
+        {mealData.specialInstructions && (
+          <div className="bg-gray-50 rounded-2xl p-6 border-2 border-gray-200">
+            <h4 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
+              <MessageCircle className="w-5 h-5 text-gray-600" />
+              Special Instructions
+            </h4>
+            <p className="text-gray-700 text-sm leading-relaxed">{mealData.specialInstructions}</p>
+          </div>
+        )}
+
+        {/* Additional Instructions Input */}
+        <div>
+          <label className="block text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+            <MessageCircle className="w-5 h-5 text-blue-600" />
+            Any Final Notes? (Optional)
+          </label>
+          <textarea
+            value={mealData.specialInstructions}
+            onChange={(e) => setMealData({ ...mealData, specialInstructions: e.target.value })}
+            className="w-full px-6 py-4 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all resize-none"
+            rows="4"
+            placeholder="Any additional preferences, delivery notes, or special requests..."
+          />
+        </div>
+
+        {/* Navigation Buttons */}
+        <div className="flex gap-4">
+          <button 
+            onClick={() => setStep(4)}
+            className="flex-1 bg-gray-100 text-gray-700 py-5 rounded-2xl font-bold text-lg hover:bg-gray-200 transition-all flex items-center justify-center gap-3"
+          >
+            <ArrowLeft className="w-6 h-6" />
+            Back to Edit
+          </button>
+          
+          <button 
+            onClick={submitMealPlan}
+            className="flex-[2] bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 text-white py-5 rounded-2xl font-bold text-xl hover:shadow-2xl transition-all flex items-center justify-center gap-3 group relative overflow-hidden"
+          >
+            <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity" />
+            <Check className="w-7 h-7 relative z-10" />
+            <span className="relative z-10">Submit My Custom Plan</span>
+          </button>
+        </div>
+      </div>
+
+      <div className="mt-8 flex items-center justify-center gap-3 text-sm text-gray-600 bg-green-50 rounded-2xl p-5 border border-green-200">
+        <ShieldCheck className="w-6 h-6 text-green-500" />
+        <span className="font-medium">Qualified vendors will review and contact you within 24 hours</span>
+      </div>
+    </div>
+  );
+})()}
+
+{/* STEP 6: Cooking Ingredients Customization */}
+{step === 6 && (
+  <div className="bg-white rounded-3xl p-10 shadow-2xl max-w-5xl mx-auto">
+    <div className="text-center mb-12">
+      <div className="inline-block p-6 bg-gradient-to-br from-amber-400 via-orange-500 to-rose-500 rounded-3xl mb-6 animate-pulse">
+        <Droplets className="w-14 h-14 text-white" />
+      </div>
+      <h2 className="text-5xl font-black bg-gradient-to-r from-amber-600 via-orange-600 to-rose-600 bg-clip-text text-transparent mb-4">
+        Your Kitchen, Your Way
+      </h2>
+      <p className="text-xl text-gray-600">Choose ingredients that matter to you</p>
+    </div>
+
+    <div className="space-y-10">
+      {/* Oil Selection - Premium Card Design */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-50 to-orange-50 p-8 border-2 border-amber-200">
+        <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-amber-200 to-transparent rounded-full blur-3xl opacity-50" />
+        <div className="relative">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-3 bg-amber-100 rounded-2xl">
+              <Droplets className="w-7 h-7 text-amber-600" />
+            </div>
+            <div>
+              <h3 className="text-2xl font-bold text-gray-800">Cooking Oil</h3>
+              <p className="text-sm text-gray-600">Select your preferred cooking oil</p>
+            </div>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-4">
+            {oilTypes.map(oil => (
+              <button
+                key={oil.id}
+                type="button"
+                onClick={() => setMealData({ ...mealData, oilType: oil.id })}
+                className={`group relative p-6 rounded-2xl border-3 transition-all duration-300 ${
+                  mealData.oilType === oil.id
+                    ? 'border-amber-500 bg-white shadow-2xl scale-105 ring-4 ring-amber-200'
+                    : 'border-gray-200 bg-white hover:border-amber-300 hover:shadow-lg hover:scale-102'
+                }`}
+              >
+                <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">{oil.icon}</div>
+                <div className="font-bold text-gray-900 mb-1 text-lg">{oil.label}</div>
+                <div className="text-sm text-gray-600">{oil.desc}</div>
+                {mealData.oilType === oil.id && (
+                  <div className="absolute top-3 right-3">
+                    <div className="bg-amber-500 rounded-full p-1">
+                      <Check className="w-4 h-4 text-white" />
+                    </div>
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Salt Selection - Elegant Design */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-50 to-cyan-50 p-8 border-2 border-blue-200">
+        <div className="absolute top-0 left-0 w-40 h-40 bg-gradient-to-br from-blue-200 to-transparent rounded-full blur-3xl opacity-50" />
+        <div className="relative">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-3 bg-blue-100 rounded-2xl">
+              <Sparkles className="w-7 h-7 text-blue-600" />
+            </div>
+            <div>
+              <h3 className="text-2xl font-bold text-gray-800">Salt Type</h3>
+              <p className="text-sm text-gray-600">Choose your sodium preference</p>
+            </div>
+          </div>
+          
+          <div className="grid md:grid-cols-5 gap-3">
+            {saltTypes.map(salt => (
+              <button
+                key={salt.id}
+                type="button"
+                onClick={() => setMealData({ ...mealData, saltType: salt.id })}
+                className={`relative p-5 rounded-xl border-2 transition-all duration-300 text-center ${
+                  mealData.saltType === salt.id
+                    ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-cyan-50 shadow-xl scale-105'
+                    : 'border-gray-200 bg-white hover:border-blue-300 hover:shadow-md'
+                }`}
+              >
+                <div className="text-3xl mb-2">{salt.icon}</div>
+                <div className="font-bold text-gray-900 text-sm mb-1">{salt.label}</div>
+                <div className="text-xs text-gray-600">{salt.desc}</div>
+                {mealData.saltType === salt.id && (
+                  <div className="absolute -top-2 -right-2 bg-blue-500 rounded-full p-1.5">
+                    <Check className="w-3 h-3 text-white" />
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Sweetener Selection - Modern Grid */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-pink-50 to-rose-50 p-8 border-2 border-pink-200">
+        <div className="absolute bottom-0 right-0 w-40 h-40 bg-gradient-to-br from-pink-200 to-transparent rounded-full blur-3xl opacity-50" />
+        <div className="relative">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-3 bg-pink-100 rounded-2xl">
+              <Cookie className="w-7 h-7 text-pink-600" />
+            </div>
+            <div>
+              <h3 className="text-2xl font-bold text-gray-800">Sweetener</h3>
+              <p className="text-sm text-gray-600">How do you like it sweet?</p>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-4 md:grid-cols-7 gap-3">
+            {sweetenerTypes.map(sweet => (
+              <button
+                key={sweet.id}
+                type="button"
+                onClick={() => setMealData({ ...mealData, sweetenerType: sweet.id })}
+                className={`relative p-4 rounded-xl border-2 transition-all duration-300 ${
+                  mealData.sweetenerType === sweet.id
+                    ? 'border-pink-500 bg-white shadow-xl scale-110 ring-4 ring-pink-200'
+                    : 'border-gray-200 bg-white hover:border-pink-300 hover:shadow-md hover:scale-105'
+                }`}
+              >
+                <div className="text-3xl mb-2">{sweet.icon}</div>
+                <div className="font-bold text-gray-900 text-xs">{sweet.label}</div>
+                {mealData.sweetenerType === sweet.id && (
+                  <div className="absolute -top-1 -right-1 bg-pink-500 rounded-full p-1">
+                    <Check className="w-3 h-3 text-white" />
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button 
+      onClick={() => setStep(7)}
+      className="w-full mt-10 bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 text-white py-6 rounded-2xl font-bold text-xl hover:shadow-2xl transition-all flex items-center justify-center gap-3 group"
+    >
+      Continue to Health Profile
+      <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+    </button>
+  </div>
+)}
+
+{/* STEP 7: Health & Medical Conditions */}
+{step === 7 && (
+  <div className="bg-white rounded-3xl p-10 shadow-2xl max-w-5xl mx-auto">
+    <div className="text-center mb-12">
+      <div className="inline-block p-6 bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-500 rounded-3xl mb-6">
+        <Shield className="w-14 h-14 text-white" />
+      </div>
+      <h2 className="text-5xl font-black bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent mb-4">
+        Your Health Matters
+      </h2>
+      <p className="text-xl text-gray-600">Help us accommodate your health needs</p>
+      <p className="text-sm text-gray-500 mt-2">(All information is confidential)</p>
+    </div>
+
+    <div className="space-y-8">
+      {/* Health Conditions - Beautiful Card Grid */}
+      <div>
+        <label className="block text-sm font-bold text-gray-700 mb-5 flex items-center gap-2">
+          <ShieldCheck className="w-5 h-5 text-emerald-600" />
+          Select Any Health Conditions (Optional)
+        </label>
+        <div className="grid md:grid-cols-4 gap-4">
+          {healthConditions.map(condition => (
+            <button
+              key={condition.id}
+              type="button"
+              onClick={() => toggleSelection(condition.id, 'healthConditions')}
+              className={`group relative p-6 rounded-2xl border-2 transition-all duration-300 text-left ${
+                mealData.healthConditions.includes(condition.id)
+                  ? `border-transparent bg-gradient-to-br ${condition.color} text-white shadow-2xl scale-105`
+                  : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-lg'
+              }`}
+            >
+              <div className={`text-4xl mb-3 ${
+                mealData.healthConditions.includes(condition.id) ? 'filter drop-shadow-lg' : ''
+              }`}>
+                {condition.icon}
+              </div>
+              <div className={`font-bold mb-1 text-lg ${
+                mealData.healthConditions.includes(condition.id) ? 'text-white' : 'text-gray-900'
+              }`}>
+                {condition.label}
+              </div>
+              <div className={`text-sm ${
+                mealData.healthConditions.includes(condition.id) ? 'text-white opacity-90' : 'text-gray-600'
+              }`}>
+                {condition.desc}
+              </div>
+              {mealData.healthConditions.includes(condition.id) && (
+                <div className="absolute top-3 right-3 bg-white rounded-full p-1.5">
+                  <Check className="w-4 h-4 text-emerald-600" />
+                </div>
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Health Notes - Beautiful Textarea */}
+      <div className="relative">
+        <label className="block text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+          <MessageCircle className="w-5 h-5 text-blue-600" />
+          Additional Health Notes (Optional)
+        </label>
+        <div className="relative">
+          <textarea
+            value={mealData.healthNotes}
+            onChange={(e) => setMealData({ ...mealData, healthNotes: e.target.value })}
+            className="w-full px-6 py-5 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-emerald-200 focus:border-emerald-400 transition-all resize-none bg-gradient-to-br from-gray-50 to-white"
+            rows="5"
+            placeholder="e.g., Allergic to shellfish, need low-sugar meals due to diabetes, prefer softer foods for dental reasons, etc."
+          />
+          <div className="absolute bottom-4 right-4 text-xs text-gray-400">
+            {mealData.healthNotes.length} characters
+          </div>
+        </div>
+        <p className="text-xs text-gray-500 mt-2 italic">
+          This helps vendors prepare meals that are safe and beneficial for you
+        </p>
+      </div>
+    </div>
+
+    <button 
+      onClick={() => setStep(8)}
+      className="w-full mt-10 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white py-6 rounded-2xl font-bold text-xl hover:shadow-2xl transition-all flex items-center justify-center gap-3 group"
+    >
+      Continue to Premium Options
+      <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+    </button>
+  </div>
+)}
+
+{/* STEP 8: Premium Customization - Ingredient Quality & Preparation */}
+{/* STEP 8: Premium Customization */}
+{step === 8 && (
+  <div className="bg-white rounded-3xl p-10 shadow-2xl max-w-6xl mx-auto">
+    <div className="text-center mb-10">
+      <div className="inline-block p-5 bg-gradient-to-br from-purple-400 via-pink-500 to-rose-500 rounded-3xl mb-4">
+        <Star className="w-12 h-12 text-white" />
+      </div>
+      <h2 className="text-4xl font-black bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 bg-clip-text text-transparent mb-3">
+        Premium Experience
+      </h2>
+      <p className="text-lg text-gray-600">Customize quality & preparation style</p>
+    </div>
+
+    <div className="space-y-8">
+      {/* Ingredient Quality - More Compact */}
+      <div>
+        <label className="block text-sm font-bold text-gray-700 mb-4">Ingredient Quality Level</label>
+        <div className="grid md:grid-cols-4 gap-4">
+          {ingredientQuality.map(quality => (
+            <button
+              key={quality.id}
+              type="button"
+              onClick={() => setMealData({ ...mealData, ingredientQuality: quality.id })}
+              className={`relative p-5 rounded-2xl border-2 transition-all text-left ${
+                mealData.ingredientQuality === quality.id
+                  ? 'border-purple-500 bg-gradient-to-br from-purple-50 to-pink-50 shadow-xl scale-105'
+                  : 'border-gray-200 bg-white hover:border-purple-300 hover:shadow-lg'
+              }`}
+            >
+              <div className="text-3xl mb-3">{quality.icon}</div>
+              <div className="font-bold text-gray-900 text-lg mb-2">{quality.label}</div>
+              <div className="text-xs text-gray-600 mb-3">{quality.desc}</div>
+              
+              <div className="space-y-1 mb-3">
+                {quality.features.map((feature, i) => (
+                  <div key={i} className="flex items-start gap-1.5 text-xs text-gray-700">
+                    <Check className="w-3 h-3 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span>{feature}</span>
+                  </div>
+                ))}
+              </div>
+              
+              <div className={`text-base font-bold ${
+                mealData.ingredientQuality === quality.id ? 'text-purple-700' : 'text-gray-500'
+              }`}>
+                {quality.price}
+              </div>
+              
+              {mealData.ingredientQuality === quality.id && (
+                <div className="absolute -top-2 -right-2 bg-purple-600 rounded-full p-1.5 shadow-lg">
+                  <Check className="w-4 h-4 text-white" />
+                </div>
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Texture & Preparation - Split Layout */}
+      <div className="grid md:grid-cols-2 gap-8">
+        {/* Texture Preference */}
+        <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-3xl p-7 border-2 border-orange-200">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="p-3 bg-orange-100 rounded-2xl">
+              <Utensils className="w-6 h-6 text-orange-600" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-gray-800">Texture Preference</h3>
+              <p className="text-xs text-gray-600">Overall food texture</p>
+            </div>
+          </div>
+          
+          <div className="space-y-3">
+            {texturePreferences.map(texture => (
+              <button
+                key={texture.id}
+                type="button"
+                onClick={() => setMealData({ ...mealData, texturePreference: texture.id })}
+                className={`w-full p-4 rounded-xl border-2 transition-all flex items-center gap-4 ${
+                  mealData.texturePreference === texture.id
+                    ? 'border-orange-500 bg-white shadow-lg scale-105'
+                    : 'border-gray-200 bg-white hover:border-orange-300'
+                }`}
+              >
+                <div className="text-3xl">{texture.icon}</div>
+                <div className="flex-1 text-left">
+                  <div className="font-bold text-gray-900">{texture.label}</div>
+                  <div className="text-xs text-gray-600">{texture.desc}</div>
+                </div>
+                {mealData.texturePreference === texture.id && (
+                  <Check className="w-5 h-5 text-orange-600" />
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Meat & Vegetable Cuts */}
+        <div className="space-y-6">
+          {/* Meat Preparation */}
+          <div className="bg-gradient-to-br from-red-50 to-rose-50 rounded-3xl p-7 border-2 border-red-200">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="p-3 bg-red-100 rounded-2xl">
+                <Egg className="w-6 h-6 text-red-600" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-gray-800">Meat Preparation</h3>
+                <p className="text-xs text-gray-600">How you like protein cut</p>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3">
+              {meatPreparations.map(meat => (
+                <button
+                  key={meat.id}
+                  type="button"
+                  onClick={() => setMealData({ ...mealData, meatPreparation: meat.id })}
+                  className={`p-4 rounded-xl border-2 transition-all ${
+                    mealData.meatPreparation === meat.id
+                      ? 'border-red-500 bg-white shadow-lg'
+                      : 'border-gray-200 bg-white hover:border-red-300'
+                  }`}
+                >
+                  <div className="text-3xl mb-2">{meat.icon}</div>
+                  <div className="font-bold text-sm text-gray-900">{meat.label}</div>
+                  {mealData.meatPreparation === meat.id && (
+                    <Check className="w-4 h-4 text-red-600 mx-auto mt-2" />
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Vegetable Cuts */}
+          <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-3xl p-7 border-2 border-green-200">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="p-3 bg-green-100 rounded-2xl">
+                <Pizza className="w-6 h-6 text-green-600" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-gray-800">Vegetable Cuts</h3>
+                <p className="text-xs text-gray-600">Preferred cutting style</p>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3">
+              {vegetableCuts.map(veg => (
+                <button
+                  key={veg.id}
+                  type="button"
+                  onClick={() => setMealData({ ...mealData, vegetableCut: veg.id })}
+                  className={`p-4 rounded-xl border-2 transition-all ${
+                    mealData.vegetableCut === veg.id
+                      ? 'border-green-500 bg-white shadow-lg'
+                      : 'border-gray-200 bg-white hover:border-green-300'
+                  }`}
+                >
+                  <div className="text-3xl mb-2">{veg.icon}</div>
+                  <div className="font-bold text-sm text-gray-900">{veg.label}</div>
+                  {mealData.vegetableCut === veg.id && (
+                    <Check className="w-4 h-4 text-green-600 mx-auto mt-2" />
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button 
+      onClick={() => setStep(9)}
+      className="w-full mt-10 bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500 text-white py-6 rounded-2xl font-bold text-xl hover:shadow-2xl transition-all flex items-center justify-center gap-3 group"
+    >
+      Final Step: Delivery & Family
+      <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+    </button>
+  </div>
+)}
+
+{/* STEP 9: Delivery & Family Options */}
+{step === 9 && (
+  <div className="bg-white rounded-3xl p-10 shadow-2xl max-w-6xl mx-auto">
+    <div className="text-center mb-12">
+      <div className="inline-block p-6 bg-gradient-to-br from-indigo-400 via-blue-500 to-cyan-500 rounded-3xl mb-6">
+        <Clock className="w-14 h-14 text-white" />
+      </div>
+      <h2 className="text-5xl font-black bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-600 bg-clip-text text-transparent mb-4">
+        Delivery & Household
+      </h2>
+      <p className="text-xl text-gray-600">When and how you want your meals</p>
+    </div>
+
+    <div className="space-y-10">
+      {/* Delivery Time Windows - Timeline Style */}
+      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-3xl p-8 border-2 border-blue-200">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-3 bg-blue-100 rounded-2xl">
+            <Clock className="w-7 h-7 text-blue-600" />
+          </div>
+          <div>
+            <h3 className="text-2xl font-bold text-gray-800">Delivery Window</h3>
+            <p className="text-sm text-gray-600">Preferred delivery time</p>
+          </div>
+        </div>
+        
+        <div className="grid md:grid-cols-3 gap-4">
+          {deliveryWindows.map(window => (
+            <button
+              key={window.id}
+              type="button"
+              onClick={() => setMealData({ ...mealData, deliveryWindow: window.id })}
+              className={`relative p-6 rounded-2xl border-2 transition-all duration-300 text-left group ${
+                mealData.deliveryWindow === window.id
+                  ? 'border-blue-500 bg-white shadow-2xl scale-105 ring-4 ring-blue-200'
+                  : 'border-gray-200 bg-white hover:border-blue-300 hover:shadow-lg'
+              }`}
+            >
+              <div className="flex items-start justify-between mb-3">
+                <div className="text-4xl">{window.icon}</div>
+                {mealData.deliveryWindow === window.id && (
+                  <div className="bg-blue-500 rounded-full p-1.5">
+                    <Check className="w-4 h-4 text-white" />
+                  </div>
+                )}
+              </div>
+              <div className="font-bold text-gray-900 text-lg mb-1">{window.label}</div>
+              <div className="text-sm text-blue-600 font-semibold mb-2">{window.time}</div>
+              <div className="text-xs text-gray-600">{window.desc}</div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Packaging Options - Premium Selection */}
+      <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-3xl p-8 border-2 border-green-200">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-3 bg-green-100 rounded-2xl">
+            <Award className="w-7 h-7 text-green-600" />
+          </div>
+          <div>
+            <h3 className="text-2xl font-bold text-gray-800">Packaging Type</h3>
+            <p className="text-sm text-gray-600">Container preference</p>
+          </div>
+        </div>
+        
+        <div className="grid md:grid-cols-4 gap-4">
+          {packagingTypes.map(pkg => (
+            <button
+              key={pkg.id}
+              type="button"
+              onClick={() => setMealData({ ...mealData, packagingType: pkg.id })}
+              className={`relative p-6 rounded-2xl border-2 transition-all duration-300 ${
+                mealData.packagingType === pkg.id
+                  ? 'border-green-500 bg-white shadow-2xl scale-105'
+                  : 'border-gray-200 bg-white hover:border-green-300 hover:shadow-lg'
+              }`}
+            >
+              <div className="text-5xl mb-3">{pkg.icon}</div>
+              <div className="font-bold text-gray-900 mb-1">{pkg.label}</div>
+              <div className="text-xs text-gray-600 mb-3">{pkg.desc}</div>
+              <div className="text-sm font-bold text-green-600">{pkg.extra}</div>
+              {mealData.packagingType === pkg.id && (
+                <div className="absolute top-3 right-3 bg-green-500 rounded-full p-1.5">
+                  <Check className="w-4 h-4 text-white" />
+                </div>
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Family & Special Options - Toggle Cards */}
+      <div className="grid md:grid-cols-2 gap-6">
+        {/* Family Size */}
+        <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-3xl p-7 border-2 border-purple-200">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="p-3 bg-purple-100 rounded-2xl">
+              <User className="w-6 h-6 text-purple-600" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-gray-800">Family Size</h3>
+              <p className="text-xs text-gray-600">Number of people eating</p>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-3">
+            {familyOptions.map(option => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => setMealData({ ...mealData, familyMembers: option.value })}
+                className={`p-5 rounded-xl border-2 transition-all ${
+                  mealData.familyMembers === option.value
+                    ? 'border-purple-500 bg-white shadow-lg scale-105'
+                    : 'border-gray-200 bg-white hover:border-purple-300'
+                }`}
+              >
+                <div className="text-4xl mb-2">{option.icon}</div>
+                <div className="font-bold text-gray-900 text-sm">{option.label}</div>
+                <div className="text-xs text-gray-600 mt-1">{option.desc}</div>
+                {mealData.familyMembers === option.value && (
+                  <Check className="w-4 h-4 text-purple-600 mx-auto mt-2" />
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Special Requirements */}
+        <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-3xl p-7 border-2 border-orange-200">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="p-3 bg-orange-100 rounded-2xl">
+              <Heart className="w-6 h-6 text-orange-600" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-gray-800">Special Needs</h3>
+              <p className="text-xs text-gray-600">Additional requirements</p>
+            </div>
+          </div>
+          
+          <div className="space-y-3">
+            <button
+              type="button"
+              onClick={() => setMealData({ ...mealData, kidsVersion: !mealData.kidsVersion })}
+              className={`w-full p-4 rounded-xl border-2 transition-all flex items-center justify-between ${
+                mealData.kidsVersion
+                  ? 'border-orange-500 bg-white shadow-lg'
+                  : 'border-gray-200 bg-white hover:border-orange-300'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <div className="text-2xl">👶</div>
+                <div className="text-left">
+                  <div className="font-bold text-gray-900 text-sm">Kids Version</div>
+                  <div className="text-xs text-gray-600">Milder, simpler meals</div>
+                </div>
+              </div>
+              <div className={`w-12 h-6 rounded-full transition-all relative ${
+                mealData.kidsVersion ? 'bg-orange-500' : 'bg-gray-300'
+              }`}>
+                <div className={`absolute w-5 h-5 bg-white rounded-full top-0.5 transition-all ${
+                  mealData.kidsVersion ? 'right-0.5' : 'left-0.5'
+                }`} />
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setMealData({ ...mealData, elderlyFriendly: !mealData.elderlyFriendly })}
+              className={`w-full p-4 rounded-xl border-2 transition-all flex items-center justify-between ${
+                mealData.elderlyFriendly
+                  ? 'border-orange-500 bg-white shadow-lg'
+                  : 'border-gray-200 bg-white hover:border-orange-300'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <div className="text-2xl">👴</div>
+                <div className="text-left">
+                  <div className="font-bold text-gray-900 text-sm">Elderly-Friendly</div>
+                  <div className="text-xs text-gray-600">Softer textures, low sodium</div>
+                </div>
+              </div>
+              <div className={`w-12 h-6 rounded-full transition-all relative ${
+                mealData.elderlyFriendly ? 'bg-orange-500' : 'bg-gray-300'
+              }`}>
+                <div className={`absolute w-5 h-5 bg-white rounded-full top-0.5 transition-all ${
+                  mealData.elderlyFriendly ? 'right-0.5' : 'left-0.5'
+                }`} />
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setMealData({ ...mealData, separateComponents: !mealData.separateComponents })}
+              className={`w-full p-4 rounded-xl border-2 transition-all flex items-center justify-between ${
+                mealData.separateComponents
+                  ? 'border-orange-500 bg-white shadow-lg'
+                  : 'border-gray-200 bg-white hover:border-orange-300'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <div className="text-2xl">📦</div>
+                <div className="text-left">
+                  <div className="font-bold text-gray-900 text-sm">Separate Components</div>
+                  <div className="text-xs text-gray-600">Curry separate from rice</div>
+                </div>
+              </div>
+              <div className={`w-12 h-6 rounded-full transition-all relative ${
+                mealData.separateComponents ? 'bg-orange-500' : 'bg-gray-300'
+              }`}>
+                <div className={`absolute w-5 h-5 bg-white rounded-full top-0.5 transition-all ${
+                  mealData.separateComponents ? 'right-0.5' : 'left-0.5'
+                }`} />
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Preference Toggles - Modern Switches */}
+      <div className="bg-gradient-to-br from-gray-50 to-slate-50 rounded-3xl p-8 border-2 border-gray-200">
+        <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+          <Sparkles className="w-6 h-6 text-indigo-600" />
+          Smart Preferences
+        </h3>
+        
+        <div className="grid md:grid-cols-2 gap-4">
+          <button
+            type="button"
+            onClick={() => setMealData({ ...mealData, weeklyVariety: !mealData.weeklyVariety })}
+            className={`p-5 rounded-xl border-2 transition-all flex items-center justify-between ${
+              mealData.weeklyVariety
+                ? 'border-indigo-500 bg-gradient-to-r from-indigo-50 to-blue-50 shadow-lg'
+                : 'border-gray-200 bg-white hover:border-indigo-300'
+            }`}
+          >
+            <div className="text-left">
+              <div className="font-bold text-gray-900 mb-1">Weekly Variety</div>
+              <div className="text-xs text-gray-600">Rotate dishes automatically</div>
+            </div>
+            <div className={`w-14 h-7 rounded-full transition-all relative ${
+              mealData.weeklyVariety ? 'bg-indigo-500' : 'bg-gray-300'
+            }`}>
+              <div className={`absolute w-6 h-6 bg-white rounded-full top-0.5 transition-all shadow-lg ${
+                mealData.weeklyVariety ? 'right-0.5' : 'left-0.5'
+              }`} />
+            </div>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setMealData({ ...mealData, seasonalPreference: !mealData.seasonalPreference })}
+            className={`p-5 rounded-xl border-2 transition-all flex items-center justify-between ${
+              mealData.seasonalPreference
+                ? 'border-green-500 bg-gradient-to-r from-green-50 to-emerald-50 shadow-lg'
+                : 'border-gray-200 bg-white hover:border-green-300'
+            }`}
+          >
+            <div className="text-left">
+              <div className="font-bold text-gray-900 mb-1">Seasonal Ingredients</div>
+              <div className="text-xs text-gray-600">Use fresh seasonal produce</div>
+            </div>
+            <div className={`w-14 h-7 rounded-full transition-all relative ${
+              mealData.seasonalPreference ? 'bg-green-500' : 'bg-gray-300'
+            }`}>
+              <div className={`absolute w-6 h-6 bg-white rounded-full top-0.5 transition-all shadow-lg ${
+                mealData.seasonalPreference ? 'right-0.5' : 'left-0.5'
+              }`} />
+            </div>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setMealData({ ...mealData, reheatingInstructions: !mealData.reheatingInstructions })}
+            className={`p-5 rounded-xl border-2 transition-all flex items-center justify-between ${
+              mealData.reheatingInstructions
+                ? 'border-orange-500 bg-gradient-to-r from-orange-50 to-amber-50 shadow-lg'
+                : 'border-gray-200 bg-white hover:border-orange-300'
+            }`}
+          >
+            <div className="text-left">
+              <div className="font-bold text-gray-900 mb-1">Reheating Guide</div>
+              <div className="text-xs text-gray-600">Include heating instructions</div>
+            </div>
+            <div className={`w-14 h-7 rounded-full transition-all relative ${
+              mealData.reheatingInstructions ? 'bg-orange-500' : 'bg-gray-300'
+            }`}>
+              <div className={`absolute w-6 h-6 bg-white rounded-full top-0.5 transition-all shadow-lg ${
+                mealData.reheatingInstructions ? 'right-0.5' : 'left-0.5'
+              }`} />
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <button 
+      onClick={() => setStep(10)}
+      className="w-full mt-10 bg-gradient-to-r from-indigo-500 via-blue-500 to-cyan-500 text-white py-6 rounded-2xl font-bold text-xl hover:shadow-2xl transition-all flex items-center justify-center gap-3 group"
+    >
+      Review Your Complete Plan
+      <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+    </button>
+  </div>
+)}
+
       </div>
 
       {/* Notification Toast */}
