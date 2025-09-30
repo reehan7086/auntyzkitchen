@@ -28,6 +28,12 @@ const App = () => {
   const [leads, setLeads] = useState([]);
   const [notification, setNotification] = useState('');
 
+  useEffect(() => {
+    if (userType === 'vendor') {
+      loadLeads();
+    }
+  }, [userType]);
+
   // Data Arrays
   const cuisines = [
     { id: 'indian', label: 'Indian', icon: '🍛' },
@@ -189,7 +195,7 @@ const App = () => {
   };
 
   // Submit Meal Plan
-  const submitMealPlan = () => {
+  const submitMealPlan = async () => {
     const macros = calculateMacrosFromInput();
     const leadData = {
       name: mealData.name,
@@ -220,38 +226,85 @@ const App = () => {
         ),
         portionSize: mealData.portionSize,
         specialInstructions: mealData.specialInstructions
-      },
-      timestamp: new Date().toLocaleString()
+      }
     };
-
-    const newLead = { ...leadData, id: `lead_${Date.now()}` };
-    setLeads(prev => [newLead, ...prev]);
-    setNotification('Success! Your meal plan request has been submitted.');
-    
-    setTimeout(() => {
-      setStep(0);
-      setUserType(null);
-      setMealData({
-        name: '', email: '', phone: '', height: '', weight: '', age: '', 
-        gender: 'male', activityLevel: '1.2', goal: 'maintain',
-        targetCalories: '', proteinGrams: '', carbsGrams: '', 
-        fatGrams: '', mealsPerDay: 3,
-        cuisines: [], dietType: [], allergens: [], cookingStyle: [], 
-        spiceLevel: 'medium', mealTiming: [], portionSize: 'regular', 
-        specialInstructions: ''
-      });
-      setCalculatedData(null);
-      setNotification('');
-    }, 3000);
+  
+    try {
+      // Insert into Supabase
+      const { data, error } = await supabase
+        .from('leads')
+        .insert([leadData])
+        .select();
+  
+      if (error) throw error;
+  
+      // Add to local state
+      const newLead = { ...data[0], id: data[0].id, timestamp: new Date(data[0].created_at).toLocaleString() };
+      setLeads(prev => [newLead, ...prev]);
+      
+      setNotification('Success! Your meal plan request has been submitted.');
+      
+      setTimeout(() => {
+        setStep(0);
+        setUserType(null);
+        setMealData({
+          name: '', email: '', phone: '', height: '', weight: '', age: '', 
+          gender: 'male', activityLevel: '1.2', goal: 'maintain',
+          targetCalories: '', proteinGrams: '', carbsGrams: '', 
+          fatGrams: '', mealsPerDay: 3,
+          cuisines: [], dietType: [], allergens: [], cookingStyle: [], 
+          spiceLevel: 'medium', mealTiming: [], portionSize: 'regular', 
+          specialInstructions: ''
+        });
+        setCalculatedData(null);
+        setNotification('');
+      }, 3000);
+    } catch (error) {
+      console.error('Error saving lead:', error);
+      setNotification('Error submitting request. Please try again.');
+      setTimeout(() => setNotification(''), 3000);
+    }
   };
 
   // Claim Lead
-  const claimLead = (leadId) => {
-    setLeads(prev => prev.map(lead => 
-      lead.id === leadId ? { ...lead, status: 'claimed' } : lead
-    ));
-    setNotification('Lead claimed successfully!');
-    setTimeout(() => setNotification(''), 3000);
+  const claimLead = async (leadId) => {
+    try {
+      const { error } = await supabase
+        .from('leads')
+        .update({ status: 'claimed' })
+        .eq('id', leadId);
+  
+      if (error) throw error;
+  
+      setLeads(prev => prev.map(lead => 
+        lead.id === leadId ? { ...lead, status: 'claimed' } : lead
+      ));
+      setNotification('Lead claimed successfully!');
+      setTimeout(() => setNotification(''), 3000);
+    } catch (error) {
+      console.error('Error claiming lead:', error);
+      setNotification('Error claiming lead. Please try again.');
+      setTimeout(() => setNotification(''), 3000);
+    }
+  };
+
+  const loadLeads = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('leads')
+        .select('*')
+        .order('created_at', { ascending: false });
+  
+      if (error) throw error;
+  
+      const formattedLeads = data.map(lead => ({
+        ...lead,
+        timestamp: new Date(lead.created_at).toLocaleString()
+      }));
+      setLeads(formattedLeads);
+    } catch (error) {
+      console.error('Error loading leads:', error);
+    }
   };
 
   // Progress Bar Component
