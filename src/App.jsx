@@ -1,13 +1,14 @@
 // PART 1: Imports, State Setup, and Data Arrays
 // Copy this into your App.js file
 
-import React, { useState } from 'react';
+import React, { useState, useEffect  } from 'react';
 import { 
   User, ChefHat, Calculator, Utensils, Shield, Mail, Check, 
   ArrowRight, ArrowLeft, Flame, Pizza, Cookie, Droplets, Egg, 
   Target, Clock, MessageCircle, ShieldCheck, UtensilsCrossed, 
   Sparkles, Heart, Zap, Star, TrendingUp, Award 
 } from 'lucide-react';
+import { supabase } from "./config/supabaseClient";
 
 const App = () => {
   // State Management
