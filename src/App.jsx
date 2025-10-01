@@ -45,6 +45,8 @@ const App = () => {
   const [leads, setLeads] = useState([]);
   const [notification, setNotification] = useState('');
   const [expandedLead, setExpandedLead] = useState(null);
+  const [vendorPassword, setVendorPassword] = useState('');
+  const [isVendorAuthenticated, setIsVendorAuthenticated] = useState(false);
 
   // Auto-scroll to top when step changes
 useEffect(() => {
@@ -523,21 +525,33 @@ const familyOptions = [
     </div>
   );
 // PART 3: Home Page and Vendor Dashboard Renders
-// Add these render conditions after the functions in your App component
-
-// HOME PAGE RENDER - IMPROVED
+// HOME PAGE RENDER - COMPACT SPACING
 if (!userType) {
   return (
     <div className="min-h-screen overflow-x-hidden bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 flex items-center justify-center p-4">
       <div className="max-w-6xl w-full">
-        <div className="text-center mb-8 sm:mb-12 md:mb-16">
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-black bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 bg-clip-text text-transparent mb-3 sm:mb-4">
-            Auntyz Kitchen
-          </h1>
-          <p className="text-xl sm:text-2xl text-gray-700 font-medium mb-2 sm:mb-3">Home-style meals for UAE expats</p>
-          <p className="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto">Your personalized meal planning platform</p>
+        {/* Logo and Title Section - Compact */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+          <img 
+            src="/logo.png" 
+            alt="Auntyz Kitchen" 
+            className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 object-contain drop-shadow-2xl"
+          />
+          <div className="text-center sm:text-left">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 bg-clip-text text-transparent mb-1">
+              Auntyz Kitchen
+            </h1>
+            <p className="text-sm sm:text-base md:text-lg text-gray-600 font-medium italic">Ghar Ka Khana</p>
+          </div>
         </div>
 
+        {/* Subtitle - Reduced spacing */}
+        <div className="text-center mb-6 sm:mb-8">
+          <p className="text-base sm:text-lg md:text-xl text-gray-700 font-semibold mb-1">Home-style meals for UAE expats</p>
+          <p className="text-xs sm:text-sm text-gray-600 max-w-2xl mx-auto">Your personalized meal planning platform</p>
+        </div>
+
+        {/* Action Cards */}
         <div className="grid md:grid-cols-2 gap-6 sm:gap-8 max-w-5xl mx-auto">
           <button
             onClick={() => setUserType('eater')}
@@ -567,31 +581,31 @@ if (!userType) {
           </button>
 
           <button
-            onClick={() => setUserType('vendor')}
-            className="group relative bg-white rounded-2xl sm:rounded-3xl p-8 sm:p-10 md:p-12 shadow-xl hover:shadow-2xl transition-all duration-500 border-2 border-transparent hover:border-blue-300 text-left transform hover:scale-105"
-          >
-            <div className="flex items-start justify-between mb-6 sm:mb-8">
-              <div className="p-4 sm:p-5 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl sm:rounded-3xl">
-                <ChefHat className="w-8 h-8 sm:w-10 sm:h-10 text-blue-500" />
-              </div>
-              <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500" />
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-3 sm:mb-4">For Vendors</h2>
-            <p className="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8">Access qualified leads and grow your business</p>
-            <div className="space-y-2 sm:space-y-3">
-              {[
-                { icon: Target, text: 'Pre-qualified leads' },
-                { icon: Star, text: 'Detailed preferences' },
-                { icon: Zap, text: 'Instant notifications' },
-                { icon: TrendingUp, text: 'Growth analytics' }
-              ].map((item, i) => (
-                <div key={i} className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm">
-                  <item.icon className="w-3 h-3 sm:w-4 sm:h-4 text-green-600 flex-shrink-0" />
-                  <span>{item.text}</span>
-                </div>
-              ))}
-            </div>
-          </button>
+  onClick={() => setUserType('vendor')}
+  className="group relative bg-white rounded-2xl sm:rounded-3xl p-8 sm:p-10 md:p-12 shadow-xl hover:shadow-2xl transition-all duration-500 border-2 border-transparent hover:border-blue-300 text-left transform hover:scale-105"
+>
+  <div className="flex items-start justify-between mb-6 sm:mb-8">
+    <div className="p-4 sm:p-5 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl sm:rounded-3xl">
+      <ChefHat className="w-8 h-8 sm:w-10 sm:h-10 text-blue-500" />
+    </div>
+    <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500" />
+  </div>
+  <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-3 sm:mb-4">Partner With Us</h2>
+  <p className="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8">Turn your kitchen into a profitable business</p>
+  <div className="space-y-2 sm:space-y-3">
+    {[
+      { icon: TrendingUp, text: 'Earn AED 15,000+ monthly' },
+      { icon: Target, text: 'Ready-to-convert customers' },
+      { icon: Zap, text: 'Zero marketing costs' },
+      { icon: Star, text: 'Flexible schedule control' }
+    ].map((item, i) => (
+      <div key={i} className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm">
+        <item.icon className="w-3 h-3 sm:w-4 sm:h-4 text-green-600 flex-shrink-0" />
+        <span>{item.text}</span>
+      </div>
+    ))}
+  </div>
+</button>
         </div>
       </div>
 
@@ -607,21 +621,95 @@ if (!userType) {
   );
 }
 
-// VENDOR DASHBOARD RENDER - MOBILE FIRST
+// VENDOR DASHBOARD RENDER - WITH PASSWORD PROTECTION - COMPLETE
 if (userType === 'vendor') {
+  // Password gate
+  if (!isVendorAuthenticated) {
+    return (
+      <div className="min-h-screen overflow-x-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl sm:rounded-3xl p-8 sm:p-10 shadow-2xl max-w-md w-full">
+          <div className="text-center mb-8">
+            <div className="inline-block p-5 sm:p-6 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-2xl sm:rounded-3xl mb-6">
+              <ChefHat className="w-10 h-10 sm:w-12 sm:h-12 text-white" />
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-3">Vendor Access</h2>
+            <p className="text-sm sm:text-base text-gray-600">Enter password to view customer leads</p>
+          </div>
+          
+          <div className="space-y-4">
+            <input
+              type="password"
+              value={vendorPassword}
+              onChange={(e) => setVendorPassword(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  if (vendorPassword === 'auntyz2025') {
+                    setIsVendorAuthenticated(true);
+                  } else {
+                    alert('Incorrect password. Contact admin for access.');
+                  }
+                }
+              }}
+              placeholder="Enter vendor password"
+              className="w-full px-4 sm:px-6 py-3 sm:py-4 border-2 border-gray-200 rounded-xl sm:rounded-2xl focus:ring-4 focus:ring-blue-200 focus:border-blue-400 transition-all text-sm sm:text-base"
+            />
+            
+            <button
+              onClick={() => {
+                if (vendorPassword === 'auntyz2025') {
+                  setIsVendorAuthenticated(true);
+                } else {
+                  alert('Incorrect password. Contact admin for access.');
+                }
+              }}
+              className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 sm:py-4 rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg hover:shadow-xl transition-all"
+            >
+              Access Dashboard
+            </button>
+            
+            <button
+              onClick={() => setUserType(null)}
+              className="w-full text-gray-600 hover:text-gray-800 font-medium py-2 text-sm sm:text-base"
+            >
+              Back to Home
+            </button>
+          </div>
+
+          <div className="mt-8 p-4 bg-blue-50 rounded-xl border border-blue-200">
+            <p className="text-xs sm:text-sm text-gray-600 text-center">
+              <strong className="text-blue-700">Vendors:</strong> Contact support to get access credentials
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Authenticated vendor dashboard
   return (
     <div className="min-h-screen overflow-x-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-2 sm:p-4 py-6 sm:py-12">
       <div className="max-w-7xl mx-auto">
-        <button 
-          onClick={() => setUserType(null)}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-4 sm:mb-8 font-medium px-2"
-        >
-          <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
-          <span className="text-sm sm:text-base">Back</span>
-        </button>
+        <div className="flex items-center justify-between mb-4 sm:mb-8">
+          <button 
+            onClick={() => setUserType(null)}
+            className="flex items-center gap-2 text-gray-600 hover:text-gray-800 font-medium px-2"
+          >
+            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+            <span className="text-sm sm:text-base">Back</span>
+          </button>
+          
+          <button
+            onClick={() => {
+              setIsVendorAuthenticated(false);
+              setVendorPassword('');
+            }}
+            className="text-sm text-red-600 hover:text-red-800 font-medium"
+          >
+            Logout
+          </button>
+        </div>
 
         <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-10 shadow-2xl">
-          {/* Header - Mobile Optimized */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-10 gap-4">
             <div>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-1 sm:mb-2">Vendor Dashboard</h2>
@@ -651,7 +739,6 @@ if (userType === 'vendor') {
                       : 'border-gray-200 hover:shadow-lg'
                   }`}
                 >
-                  {/* Compact Header - Mobile First */}
                   <div className="p-3 sm:p-4 md:p-6">
                     <div className="flex items-start justify-between mb-3 sm:mb-4 gap-2">
                       <div className="flex items-center gap-2 sm:gap-3 md:gap-4 flex-1 min-w-0">
@@ -666,15 +753,14 @@ if (userType === 'vendor') {
                         </div>
                       </div>
                       <span className={`px-2 sm:px-3 md:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-bold whitespace-nowrap flex items-center gap-1 ${
-  lead.status === 'claimed' 
-    ? 'bg-green-200 text-green-800' 
-    : 'bg-orange-200 text-orange-800'
-}`}>
-  {lead.status === 'claimed' ? '✓ Claimed' : '● Available'}
-</span>
+                        lead.status === 'claimed' 
+                          ? 'bg-green-200 text-green-800' 
+                          : 'bg-orange-200 text-orange-800'
+                      }`}>
+                        {lead.status === 'claimed' ? '✓ Claimed' : '● Available'}
+                      </span>
                     </div>
 
-                    {/* Key Stats - Mobile Grid */}
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-3 mb-3 sm:mb-4">
                       <div className="bg-white rounded-lg sm:rounded-xl p-2 sm:p-3 text-center border border-gray-200">
                         <div className="text-lg sm:text-xl md:text-2xl font-bold text-green-600 truncate">AED {lead.monthly_cost}</div>
@@ -698,7 +784,6 @@ if (userType === 'vendor') {
                       </div>
                     </div>
 
-                    {/* Quick Tags - Mobile Wrap */}
                     <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-3 sm:mb-4">
                       {lead.cuisine && lead.cuisine.split(',').slice(0, 2).map((c, i) => (
                         <span key={i} className="bg-purple-100 text-purple-700 px-2 sm:px-3 py-1 rounded-full text-xs font-medium truncate max-w-[120px]">
@@ -722,7 +807,6 @@ if (userType === 'vendor') {
                       )}
                     </div>
 
-                    {/* Expand Button - Mobile Friendly */}
                     <button
                       onClick={() => setExpandedLead(expandedLead === lead.id ? null : lead.id)}
                       className="w-full py-2 sm:py-3 bg-gray-100 hover:bg-gray-200 rounded-lg sm:rounded-xl font-medium text-sm sm:text-base text-gray-700 transition-all flex items-center justify-center gap-2"
@@ -741,10 +825,8 @@ if (userType === 'vendor') {
                     </button>
                   </div>
 
-                  {/* Expanded Details - Mobile Responsive */}
                   {expandedLead === lead.id && (
                     <div className="border-t-2 border-gray-200 bg-gray-50 p-3 sm:p-4 md:p-6 space-y-3 sm:space-y-4">
-                      {/* Macros - Mobile Grid */}
                       <div className="bg-white rounded-lg sm:rounded-xl p-3 sm:p-4">
                         <div className="font-bold text-sm sm:text-base text-gray-800 mb-2 sm:mb-3 flex items-center gap-2">
                           <Flame className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500" />
@@ -766,9 +848,7 @@ if (userType === 'vendor') {
                         </div>
                       </div>
 
-                      {/* Details Grid - Mobile Stack */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
-                        {/* Ingredients */}
                         {(lead.meal_details?.oilType || lead.meal_details?.saltType) && (
                           <div className="bg-white rounded-lg sm:rounded-xl p-3 sm:p-4">
                             <div className="font-bold text-sm sm:text-base text-gray-800 mb-2 flex items-center gap-2">
@@ -789,7 +869,6 @@ if (userType === 'vendor') {
                           </div>
                         )}
 
-                        {/* Preparation */}
                         {(lead.meal_details?.texturePreference || lead.meal_details?.meatPreparation) && (
                           <div className="bg-white rounded-lg sm:rounded-xl p-3 sm:p-4">
                             <div className="font-bold text-sm sm:text-base text-gray-800 mb-2 flex items-center gap-2">
@@ -810,7 +889,6 @@ if (userType === 'vendor') {
                           </div>
                         )}
 
-                        {/* Delivery */}
                         {lead.meal_details?.deliveryWindow && (
                           <div className="bg-white rounded-lg sm:rounded-xl p-3 sm:p-4">
                             <div className="font-bold text-sm sm:text-base text-gray-800 mb-2 flex items-center gap-2">
@@ -826,7 +904,6 @@ if (userType === 'vendor') {
                           </div>
                         )}
 
-                        {/* Cooking */}
                         {lead.meal_details?.spiceLevel && (
                           <div className="bg-white rounded-lg sm:rounded-xl p-3 sm:p-4">
                             <div className="font-bold text-sm sm:text-base text-gray-800 mb-2 flex items-center gap-2">
@@ -843,7 +920,6 @@ if (userType === 'vendor') {
                         )}
                       </div>
 
-                      {/* Health Conditions - Mobile Optimized */}
                       {lead.meal_details?.healthConditions && lead.meal_details.healthConditions.length > 0 && (
                         <div className="bg-red-50 rounded-lg sm:rounded-xl p-3 sm:p-4 border-2 border-red-200">
                           <div className="font-bold text-sm sm:text-base text-red-800 mb-2 flex items-center gap-2">
@@ -865,7 +941,6 @@ if (userType === 'vendor') {
                         </div>
                       )}
 
-                      {/* Special Preferences - Mobile Compact */}
                       {(lead.meal_details?.kidsVersion || lead.meal_details?.elderlyFriendly || lead.meal_details?.separateComponents) && (
                         <div className="bg-white rounded-lg sm:rounded-xl p-3 sm:p-4">
                           <div className="font-bold text-sm sm:text-base text-gray-800 mb-2 flex items-center gap-2">
@@ -892,7 +967,6 @@ if (userType === 'vendor') {
                         </div>
                       )}
 
-                      {/* Instructions - Mobile Compact */}
                       {lead.meal_details?.specialInstructions && (
                         <div className="bg-yellow-50 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-yellow-200">
                           <div className="font-bold text-sm sm:text-base text-yellow-900 mb-2 flex items-center gap-2">
@@ -907,7 +981,6 @@ if (userType === 'vendor') {
                     </div>
                   )}
 
-                  {/* Action Button - Mobile Optimized */}
                   <div className="p-3 sm:p-4 md:p-6 pt-0">
                     {lead.status === 'pending' ? (
                       <button 
